@@ -1,6 +1,7 @@
 const config = require("config");
-import { forbidden_error, error_msg } from "./error";
-import { VerifyToken } from "./token";
+const forbidden_error = require("./error").forbidden_error;
+const error_msg = require("./error").error_msg;
+const VerifyToken = require("./token").VerifyToken;
 const req_auth = (req, res, next) => {
     var payload = req.header;
     if (!payload.username || !payload.password) {
@@ -23,4 +24,4 @@ const jwt_auth = (req, res, next) => {
         res.json(error_msg("Protected API. Please send required Token"));
     }
 };
-export { req_auth, jwt_auth };
+exports = { req_auth, jwt_auth };
