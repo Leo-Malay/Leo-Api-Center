@@ -1,0 +1,18 @@
+{
+    "APP": {
+        "PORT": ""
+    },
+    "DB": {
+        "URL": "",
+        "NAME": ""
+    },
+    "AUTH": {
+        "API_AUTH": {
+            "USERNAME": "",
+            "PASSWORD": ""
+        },
+        "JWT": {
+            "SECRET": "qwemnbRTYVCXyuiZLHksdjALIE0834787587atfnei"
+        }
+    }
+}
