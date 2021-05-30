@@ -1,25 +1,27 @@
 {
-  "name": "leo-api-center",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "dependencies": {
-    "config": "^3.3.6",
-    "express": "^4.17.1",
-    "mongodb": "^3.6.9"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Leo-Malay/Leo-Api-Center.git"
-  },
-  "author": "Malay Bhavsar",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Leo-Malay/Leo-Api-Center/issues"
-  },
-  "homepage": "https://github.com/Leo-Malay/Leo-Api-Center#readme"
+    "name": "leo-api-center",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "compression": "^1.7.4",
+        "config": "^3.3.6",
+        "express": "^4.17.1",
+        "jsonwebtoken": "^8.5.1",
+        "mongodb": "^3.6.9"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "start": "node index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Leo-Malay/Leo-Api-Center.git"
+    },
+    "author": "Malay Bhavsar",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Leo-Malay/Leo-Api-Center/issues"
+    },
+    "homepage": "https://github.com/Leo-Malay/Leo-Api-Center#readme"
 }

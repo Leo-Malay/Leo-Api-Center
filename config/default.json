@@ -1,0 +1,19 @@
+{
+    "APP": {
+        "PORT": ""
+    },
+    "DB": {
+        "URL": "",
+        "LOCALURL": "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false",
+        "NAME": "Leo-Api-Center"
+    },
+    "AUTH": {
+        "API_AUTH": {
+            "USERNAME": "",
+            "PASSWORD": ""
+        },
+        "JWT": {
+            "SECRET": "qwemnbRTYVCXyuiZLHksdjALIE0834787587atfnei"
+        }
+    }
+}
