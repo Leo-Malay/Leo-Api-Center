@@ -1,29 +1,17 @@
 const db = require("../../db");
-const GetData = (db_name, payload) => {
-    return db.getDB().collection(db_name).findOne();
+
+const Insert = (db_name, payload) => {
+    return db.getDB().collection(db_name).insertOne(payload);
 };
-const InsertData = (db_name, payload) => {
+const Remove = (db_name, payload) => {
     return db.getDB().collection(db_name);
 };
-const RemoveData = (db_name, payload) => {
-    return db.getDB().collection(db_name);
-};
-const FindData = (db_name, payload) => {
-    db.getDB()
-        .collection(db_name)
-        .findOne(payload)
-        .then((result0) => {
-            if (result0) return true;
-            else return false;
-        })
-        .catch((err) => {
-            throw err;
-        });
+const Find = (db_name, payload) => {
+    return db.getDB().collection(db_name).findOne(payload);
 };
 
 module.exports = {
-    GetData,
-    InsertData,
-    RemoveData,
-    FindData,
+    Insert,
+    Remove,
+    Find,
 };

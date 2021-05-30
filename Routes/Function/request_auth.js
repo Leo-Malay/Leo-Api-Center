@@ -24,4 +24,4 @@ const jwt_auth = (req, res, next) => {
         res.json(error_msg("Protected API. Please send required Token"));
     }
 };
-exports = { req_auth, jwt_auth };
+module.exports = { req_auth, jwt_auth };

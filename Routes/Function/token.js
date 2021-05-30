@@ -1,8 +1,10 @@
 const jwt = require("jsonwebtoken");
 const config = require("config");
 
-const GenToken = (payload) => {
-    return jwt.sign(payload, config.get("AUTH.JWT.SECRET"));
+const GenToken = (payload, days = 1) => {
+    return jwt.sign(payload, config.get("AUTH.JWT.SECRET"), {
+        expiresIn: `${days} days`,
+    });
 };
 const VerifyToken = (token) => {
     try {
@@ -15,11 +17,4 @@ const VerifyToken = (token) => {
     }
 };
 
-export { GenToken, VerifyToken };
-/*
-payload : {
-    gen:
-    exp:  Math.floor(Date.now() / 1000) + (60 * 60)
-    data: {}
-}
-*/
+module.exports = { GenToken, VerifyToken };
