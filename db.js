@@ -15,8 +15,8 @@ const connect = (cb) => {
               err ? cb(err) : ((state.db = client.db(dbname)), cb());
           });
 };
-const getID = (_id) => ObjectId(_id);
-const getOID = (_id) => OId(_id);
+const getID = (_id) => String(ObjectId(_id));
+const getOID = (_id) => OId(String(_id));
 const getDB = () => state.db;
 
 module.exports = {
