@@ -8,8 +8,11 @@ POST - rm_account
 POST - ch_password
 POST - login
 
------/Message/----- (Text Message With Limited Text)
-POST - send
-GET - recieve
+-----/FoodieLeo/-----
+POST - add_cart
+POST - rm_cart
+GET - cart
+GET - menu
 
+-----//-----
 -----//-----

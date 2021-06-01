@@ -4,7 +4,7 @@ const OId = require("mongodb").ObjectId.createFromHexString;
 const config = require("config");
 const mongoOption = { useNewUrlParser: !0, useUnifiedTopology: !0 };
 
-const url = config.get("DB.LOCALURL");
+const url = config.get("DB.URL");
 const dbname = config.get("DB.NAME");
 
 const state = { db: null };
