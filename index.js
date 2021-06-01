@@ -15,7 +15,7 @@ App.use("/FoodieLeo", foodieLeo);
 
 db.connect((err) => {
     if (err) throw err;
-    App.listen(8080 || process.env.PORT, () => {
+    App.listen(process.env.PORT || 8501, () => {
         console.log("[+] Serer has started");
     });
 });
