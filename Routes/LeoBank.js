@@ -49,101 +49,114 @@ leoBank.post("/register", Request_Auth.jwt_auth, (req, res) => {
         });
 });
 leoBank.post("/deposit_money", Request_Auth.jwt_auth, (req, res) => {
-    db_method
-        .Update(
-            db_user,
-            { pay_id: req.body.pay_id, isDeleted: 0 },
-            { $inc: { balance: req.body.amount } }
-        )
-        .then((result0) => {
-            console.log(result0);
-            if (result0 == null) {
-                res.json(
-                    error.error_msg(
-                        "Something went wrong! Please wait sometime and then try again"
-                    )
-                );
-            } else {
-                db_method
-                    .Insert(db_txn, {
-                        from_pay_id: "BANK",
-                        to_pay_id: req.body.pay_id,
-                        date: Date.now(),
-                        remarks: "Added Money from Bank to LeoBank",
-                    })
-                    .then((result1) => {
-                        res.json({
-                            success: true,
-                            msg: "Money Added Successfully",
-                            balance: result0.balance,
+    if (!req.body.amount || !req.body.pay_id) {
+        res.json(error.error_msg("Missing Fields!"));
+    } else {
+        db_method
+            .UpdateRaw(
+                db_user,
+                { pay_id: req.body.pay_id, isDeleted: 0 },
+                { $inc: { balance: parseInt(req.body.amount) } }
+            )
+            .then((result0) => {
+                if (result0.value == null) {
+                    res.json(
+                        error.error_msg(
+                            "Something went wrong! Please wait sometime and then try again"
+                        )
+                    );
+                } else {
+                    db_method
+                        .Insert(db_txn, {
+                            from_pay_id: "BANK",
+                            to_pay_id: req.body.pay_id,
+                            amount: parseInt(req.body.amount),
+                            date: Date.now(),
+                            remarks: "Deposited Money to LeoBank",
+                        })
+                        .then((result1) => {
+                            res.json({
+                                success: true,
+                                msg: "Money Added Successfully",
+                                balance:
+                                    result0.value.balance +
+                                    parseInt(req.body.amount),
+                            });
+                        })
+                        .catch((err) => {
+                            throw err;
                         });
-                    })
-                    .catch((err) => {
-                        throw err;
-                    });
-            }
-        })
-        .catch((err) => {
-            throw err;
-        });
+                }
+            })
+            .catch((err) => {
+                throw err;
+            });
+    }
 });
 leoBank.post("/withdraw_money", Request_Auth.jwt_auth, (req, res) => {
-    db_method
-        .Find(db_user, {
-            pay_id: req.token_payload.data.username,
-            uid: req.token_payload.data.uid,
-            isDeleted: 0,
-        })
-        .then((result0) => {
-            if (result0.balance <= req.body.amount) {
-                res.json(error.error_msg("Insufficient Balance"));
-            } else {
-                db_method
-                    .Update(
-                        db_user,
-                        {
-                            pay_id: req.token_payload.data.username,
-                            isDeleted: 0,
-                        },
-                        { $inc: { balance: -req.body.amount } }
-                    )
-                    .then((result0) => {
-                        console.log(result0);
-                        if (result0 == null) {
-                            res.json(
-                                error.error_msg(
-                                    "Something went wrong! Please wait sometime and then try again"
-                                )
-                            );
-                        } else {
-                            db_method
-                                .Insert(db_txn, {
-                                    from_pay_id:
-                                        req.token_payload.data.username,
-                                    to_pay_id: "BANK",
-                                    date: Date.now(),
-                                    remarks: "Added Money from LeoBank to Bank",
-                                })
-                                .then((result1) => {
-                                    res.json({
-                                        success: true,
-                                        msg: "Money Withdrawal Successfull",
-                                        balance: result0.balance,
+    if (!req.body.amount || !req.body.pay_id) {
+        res.json(error.error_msg("Missing Fields!"));
+    } else {
+        db_method
+            .Find(db_user, {
+                pay_id: req.token_payload.data.username,
+                uid: req.token_payload.data.uid,
+                isDeleted: 0,
+            })
+            .then((result0) => {
+                if (result0.balance <= parseInt(req.body.amount)) {
+                    res.json(error.error_msg("Insufficient Balance"));
+                } else {
+                    db_method
+                        .UpdateRaw(
+                            db_user,
+                            {
+                                pay_id: req.token_payload.data.username,
+                                isDeleted: 0,
+                            },
+                            { $inc: { balance: -parseInt(req.body.amount) } }
+                        )
+                        .then((result0) => {
+                            if (result0.value == null) {
+                                res.json(
+                                    error.error_msg(
+                                        "Something went wrong! Please wait sometime and then try again"
+                                    )
+                                );
+                            } else {
+                                db_method
+                                    .Insert(db_txn, {
+                                        from_pay_id:
+                                            req.token_payload.data.username,
+                                        to_pay_id: "BANK",
+                                        amount: parseInt(req.body.amount),
+                                        date: Date.now(),
+                                        remarks:
+                                            "Withdrawed Money from LeoBank",
+                                    })
+                                    .then((result1) => {
+                                        res.json({
+                                            success: true,
+                                            msg: "Money Withdrawal Successfull",
+                                            balance:
+                                                result0.value.balance -
+                                                parseInt(req.body.amount),
+                                        });
+                                    })
+                                    .catch((err) => {
+                                        throw err;
                                     });
-                                })
-                                .catch((err) => {
-                                    throw err;
-                                });
-                        }
-                    })
-                    .catch((err) => {
-                        throw err;
-                    });
-            }
-        })
-        .catch((err) => {
-            throw err;
-        });
+                            }
+                        })
+                        .catch((err) => {
+                            throw err;
+                        });
+                }
+            })
+            .catch((err) => {
+                throw err;
+            });
+    }
 });
 leoBank.get("/txn", Request_Auth.jwt_auth, (req, res) => {
     db_method
@@ -159,159 +172,178 @@ leoBank.get("/txn", Request_Auth.jwt_auth, (req, res) => {
         });
 });
 leoBank.post("/txn", Request_Auth.jwt_auth, (req, res) => {
-    db_method
-        .Find(db_user, {
-            uid: req.token_payload.data.uid,
-            pay_id: req.token_payload.data.username,
-            isDeleted: 0,
-        })
-        .then((result0) => {
-            if (result0.balance <= req.body.amount) {
-                res.json(error.error_msg("Insufficient Balance"));
-            } else {
-                db_method
-                    .Update(
-                        db_user,
-                        {
-                            uid: req.token_payload.data.uid,
-                            pay_id: req.token_payload.data.username,
-                            isDeleted: 0,
-                        },
-                        { $inc: { balance: -req.body.amount } }
-                    )
-                    .then((result1) => {
-                        console.log(result1);
-                        if (result1 == null) {
-                            res.json(
-                                error.error_msg(
-                                    "Something went wrong! Please wait sometime and then try again"
-                                )
-                            );
-                        } else {
-                            db_method
-                                .Update(
-                                    db_user,
-                                    {
-                                        pay_id: req.body.pay_id,
-                                        isDeleted: 0,
-                                    },
-                                    { $inc: { balance: req.body.amount } }
-                                )
-                                .then((result2) => {
-                                    console.log(result2);
-                                    if (result2 == null) {
-                                        res.json(
-                                            error.error_msg(
-                                                "Something went wrong! Please wait sometime and then try again"
-                                            )
-                                        );
-                                    } else {
+    if (!req.body.amount || !req.body.pay_id) {
+        res.json(error.error_msg("Missing Fields!"));
+    } else {
+        db_method
+            .Find(db_user, {
+                uid: req.token_payload.data.uid,
+                pay_id: req.token_payload.data.username,
+                isDeleted: 0,
+            })
+            .then((result0) => {
+                if (result0.balance <= parseInt(req.body.amount)) {
+                    res.json(error.error_msg("Insufficient Balance"));
+                } else {
+                    db_method
+                        .UpdateRaw(
+                            db_user,
+                            {
+                                uid: req.token_payload.data.uid,
+                                pay_id: req.token_payload.data.username,
+                                isDeleted: 0,
+                            },
+                            { $inc: { balance: -parseInt(req.body.amount) } }
+                        )
+                        .then((result1) => {
+                            if (result1.value == null) {
+                                res.json(
+                                    error.error_msg(
+                                        "Something went wrong! Please wait sometime and then try again"
+                                    )
+                                );
+                            } else {
+                                db_method
+                                    .UpdateRaw(
+                                        db_user,
+                                        {
+                                            pay_id: req.body.pay_id,
+                                            isDeleted: 0,
+                                        },
+                                        {
+                                            $inc: {
+                                                balance: parseInt(
+                                                    req.body.amount
+                                                ),
+                                            },
+                                        }
+                                    )
+                                    .then((result2) => {
+                                        if (result2.value == null) {
+                                            res.json(
+                                                error.error_msg(
+                                                    "Something went wrong! Please wait sometime and then try again"
+                                                )
+                                            );
+                                        } else {
+                                            db_method
+                                                .Insert(db_txn, {
+                                                    from_pay_id:
+                                                        req.token_payload.data
+                                                            .username,
+                                                    to_pay_id: req.body.pay_id,
+                                                    amount: parseInt(
+                                                        req.body.amount
+                                                    ),
+                                                    date: Date.now(),
+                                                    remarks: req.body.remarks,
+                                                })
+                                                .then((result3) => {
+                                                    res.json({
+                                                        success: true,
+                                                        msg: "Money Transfered Successfully",
+                                                        balance:
+                                                            result3.balance,
+                                                    });
+                                                })
+                                                .catch((err) => {
+                                                    throw err;
+                                                });
+                                        }
+                                    })
+                                    .catch((err) => {
+                                        throw err;
+                                    });
+                            }
+                        })
+                        .catch((err) => {
+                            throw err;
+                        });
+                }
+            })
+            .catch((err) => {
+                throw err;
+            });
+    }
+});
+leoBank.post("/create_fd", Request_Auth.jwt_auth, (req, res) => {
+    if (!req.body.amount) {
+        res.json(error.error_msg("Missing Fields!"));
+    } else {
+        db_method
+            .Find(db_user, { uid: req.token_payload.data.uid, isDeleted: 0 })
+            .then((result0) => {
+                if (result0.balance <= parseInt(req.body.amount)) {
+                    res.json(error.error_msg("Insufficient Balance"));
+                } else {
+                    db_method
+                        .UpdateRaw(
+                            db_user,
+                            { uid: req.token_payload.data.uid, isDeleted: 0 },
+                            { $inc: { balance: -parseInt(req.body.amount) } }
+                        )
+                        .then((result0) => {
+                            if (result0.value == null) {
+                                res.json(
+                                    error.error_msg(
+                                        "Something went wrong! Please wait sometime and then try again"
+                                    )
+                                );
+                            } else {
+                                db_method
+                                    .InsertArray(
+                                        db_user,
+                                        {
+                                            uid: req.token_payload.data.uid,
+                                            isDeleted: 0,
+                                        },
+                                        {
+                                            fd: {
+                                                amount: parseInt(
+                                                    req.body.amount
+                                                ),
+                                                date: Date.now(),
+                                            },
+                                        }
+                                    )
+                                    .then((result1) => {
                                         db_method
                                             .Insert(db_txn, {
                                                 from_pay_id:
                                                     req.token_payload.data
                                                         .username,
-                                                to_pay_id: req.body.pay_id,
+                                                to_pay_id: "BANK",
+                                                amount: parseInt(
+                                                    req.body.amount
+                                                ),
                                                 date: Date.now(),
-                                                remarks: req.body.remarks,
+                                                remarks: "FD Created by User",
                                             })
-                                            .then((result3) => {
+                                            .then((result1) => {
                                                 res.json({
                                                     success: true,
-                                                    msg: "Money Transfered Successfully",
-                                                    balance: result3.balance,
+                                                    msg: "FD created Successfully",
+                                                    balance: result0.balance,
                                                 });
                                             })
                                             .catch((err) => {
                                                 throw err;
                                             });
-                                    }
-                                })
-                                .catch((err) => {
-                                    throw err;
-                                });
-                        }
-                    })
-                    .catch((err) => {
-                        throw err;
-                    });
-            }
-        })
-        .catch((err) => {
-            throw err;
-        });
-});
-leoBank.post("/create_fd", Request_Auth.jwt_auth, (req, res) => {
-    db_method
-        .Find(db_user, { uid: req.token_payload.data.uid, isDeleted: 0 })
-        .then((result0) => {
-            if (result0.balance <= req.body.amount) {
-                res.json(error.error_msg("Insufficient Balance"));
-            } else {
-                db_method
-                    .Update(
-                        db_user,
-                        { uid: req.token_payload.data.uid, isDeleted: 0 },
-                        { $inc: { balance: -req.body.amount } }
-                    )
-                    .then((result0) => {
-                        console.log(result0);
-                        if (result0 == null) {
-                            res.json(
-                                error.error_msg(
-                                    "Something went wrong! Please wait sometime and then try again"
-                                )
-                            );
-                        } else {
-                            db_method
-                                .Update(
-                                    db_user,
-                                    {
-                                        uid: req.token_payload.data.uid,
-                                        isDeleted: 0,
-                                    },
-                                    {
-                                        $addToSet: {
-                                            fd: {
-                                                amount: req.body.amount,
-                                                date: Date.now(),
-                                            },
-                                        },
-                                    }
-                                )
-                                .then((result1) => {
-                                    db_method
-                                        .Insert(db_txn, {
-                                            from_pay_id:
-                                                req.token_payload.data.username,
-                                            to_pay_id: "BANK",
-                                            date: Date.now(),
-                                            remarks: "FD Created by User",
-                                        })
-                                        .then((result1) => {
-                                            res.json({
-                                                success: true,
-                                                msg: "FD created Successfully",
-                                                balance: result0.balance,
-                                            });
-                                        })
-                                        .catch((err) => {
-                                            throw err;
-                                        });
-                                })
-                                .catch((err) => {
-                                    throw err;
-                                });
-                        }
-                    })
-                    .catch((err) => {
-                        throw err;
-                    });
-            }
-        })
-        .catch((err) => {
-            throw err;
-        });
+                                    })
+                                    .catch((err) => {
+                                        throw err;
+                                    });
+                            }
+                        })
+                        .catch((err) => {
+                            throw err;
+                        });
+                }
+            })
+            .catch((err) => {
+                throw err;
+            });
+    }
 });
 leoBank.get("/fd", Request_Auth.jwt_auth, (req, res) => {
     db_method

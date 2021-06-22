@@ -21,6 +21,12 @@ const Update = (db_name, search_payload, payload) => {
         .collection(db_name)
         .findOneAndUpdate(search_payload, { $set: payload });
 };
+const UpdateRaw = (db_name, search_payload, payload) => {
+    return db
+        .getDB()
+        .collection(db_name)
+        .findOneAndUpdate(search_payload, payload);
+};
 const Find = (db_name, payload) => {
     return db.getDB().collection(db_name).findOne(payload);
 };
@@ -33,6 +39,7 @@ module.exports = {
     InsertArray,
     RemoveArray,
     Update,
+    UpdateRaw,
     Find,
     FindAll,
 };
