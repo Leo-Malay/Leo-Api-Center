@@ -89,7 +89,11 @@ leoBank.post("/deposit_money", Request_Auth.jwt_auth, (req, res) => {
 });
 leoBank.post("/withdraw_money", Request_Auth.jwt_auth, (req, res) => {
     db_method
-        .Find(db_user, { pay_id: req.body.pay_id, isDeleted: 0 })
+        .Find(db_user, {
+            pay_id: req.token_payload.data.username,
+            uid: req.token_payload.data.uid,
+            isDeleted: 0,
+        })
         .then((result0) => {
             if (result0.balance <= req.body.amount) {
                 res.json(error.error_msg("Insufficient Balance"));
@@ -97,7 +101,10 @@ leoBank.post("/withdraw_money", Request_Auth.jwt_auth, (req, res) => {
                 db_method
                     .Update(
                         db_user,
-                        { pay_id: req.body.pay_id, isDeleted: 0 },
+                        {
+                            pay_id: req.token_payload.data.username,
+                            isDeleted: 0,
+                        },
                         { $inc: { balance: -req.body.amount } }
                     )
                     .then((result0) => {
@@ -111,7 +118,8 @@ leoBank.post("/withdraw_money", Request_Auth.jwt_auth, (req, res) => {
                         } else {
                             db_method
                                 .Insert(db_txn, {
-                                    from_pay_id: req.body.pay_id,
+                                    from_pay_id:
+                                        req.token_payload.data.username,
                                     to_pay_id: "BANK",
                                     date: Date.now(),
                                     remarks: "Added Money from LeoBank to Bank",
@@ -233,7 +241,78 @@ leoBank.post("/txn", Request_Auth.jwt_auth, (req, res) => {
             throw err;
         });
 });
-leoBank.post("/create_fd", Request_Auth.jwt_auth, (req, res) => {});
+leoBank.post("/create_fd", Request_Auth.jwt_auth, (req, res) => {
+    db_method
+        .Find(db_user, { uid: req.token_payload.data.uid, isDeleted: 0 })
+        .then((result0) => {
+            if (result0.balance <= req.body.amount) {
+                res.json(error.error_msg("Insufficient Balance"));
+            } else {
+                db_method
+                    .Update(
+                        db_user,
+                        { uid: req.token_payload.data.uid, isDeleted: 0 },
+                        { $inc: { balance: -req.body.amount } }
+                    )
+                    .then((result0) => {
+                        console.log(result0);
+                        if (result0 == null) {
+                            res.json(
+                                error.error_msg(
+                                    "Something went wrong! Please wait sometime and then try again"
+                                )
+                            );
+                        } else {
+                            db_method
+                                .Update(
+                                    db_user,
+                                    {
+                                        uid: req.token_payload.data.uid,
+                                        isDeleted: 0,
+                                    },
+                                    {
+                                        $addToSet: {
+                                            fd: {
+                                                amount: req.body.amount,
+                                                date: Date.now(),
+                                            },
+                                        },
+                                    }
+                                )
+                                .then((result1) => {
+                                    db_method
+                                        .Insert(db_txn, {
+                                            from_pay_id:
+                                                req.token_payload.data.username,
+                                            to_pay_id: "BANK",
+                                            date: Date.now(),
+                                            remarks: "FD Created by User",
+                                        })
+                                        .then((result1) => {
+                                            res.json({
+                                                success: true,
+                                                msg: "FD created Successfully",
+                                                balance: result0.balance,
+                                            });
+                                        })
+                                        .catch((err) => {
+                                            throw err;
+                                        });
+                                })
+                                .catch((err) => {
+                                    throw err;
+                                });
+                        }
+                    })
+                    .catch((err) => {
+                        throw err;
+                    });
+            }
+        })
+        .catch((err) => {
+            throw err;
+        });
+});
 leoBank.get("/fd", Request_Auth.jwt_auth, (req, res) => {
     db_method
         .Find(db_user, {
@@ -272,4 +351,14 @@ module.exports = leoBank;
 /**
  * USER --> [_id, uid, balance, fd:[amount, created], isDeleted, isVerified, pay_id]
  * TXN --> [_id, from_pay_id, to_pay_id, date, remarks]
+ *
+ * POST - register -> token
+ * POST - deposit_money -> token, pay_id, amount
+ * POST - withdraw_money -> token, amount
+ * GET - txn -> token
+ * POST - txn -> token, amount, pay_id
+ * POST - create_fd -> token, amount
+ * GET - fd -> token
+ * POST - destroy_fd -> token
+ * GET - balance -> token
  */
