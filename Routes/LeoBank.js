@@ -2,7 +2,7 @@ const express = require("express");
 const error = require("./Function/error");
 const Request_Auth = require("./Function/request_auth");
 const db_method = require("./Function/db_method");
-const { json } = require("express");
+const ObjectId = require("mongodb").ObjectId;
 
 const leoBank = express.Router();
 const db_user = "BankUser";
@@ -273,7 +273,11 @@ leoBank.post("/create_fd", Request_Auth.jwt_auth, (req, res) => {
         db_method
             .Find(db_user, { uid: req.token_payload.data.uid, isDeleted: 0 })
             .then((result0) => {
-                if (result0.balance <= parseInt(req.body.amount)) {
+                if (result0 == null) {
+                    res.json(
+                        error.error_msg("Try Again Later. Suggested: Re-Login")
+                    );
+                } else if (result0.balance <= parseInt(req.body.amount)) {
                     res.json(error.error_msg("Insufficient Balance"));
                 } else {
                     db_method
@@ -299,6 +303,7 @@ leoBank.post("/create_fd", Request_Auth.jwt_auth, (req, res) => {
                                         },
                                         {
                                             fd: {
+                                                fd_id: ObjectId(),
                                                 amount: parseInt(
                                                     req.body.amount
                                                 ),
@@ -363,7 +368,94 @@ leoBank.get("/fd", Request_Auth.jwt_auth, (req, res) => {
             throw err;
         });
 });
-leoBank.post("/destroy_fd", Request_Auth.jwt_auth, (req, res) => {});
+leoBank.post("/encash_fd", Request_Auth.jwt_auth, (req, res) => {
+    if (!req.body.fd_id) {
+        res.json(error.error_msg("Missing Fields!"));
+    } else {
+        db_method
+            .Find(db_user, { uid: req.token_payload.data.uid, isDeleted: 0 })
+            .then((result0) => {
+                if (result0 == null) {
+                    res.json(
+                        error.error_msg("Try Again Later. Suggested: Re-Login")
+                    );
+                } else {
+                    var amount = null;
+                    for (var i = 0; i < result0.fd.length; i++) {
+                        if (result0.fd[i].fd_id == req.body.fd_id) {
+                            amount = result0.fd[i].amount;
+                            break;
+                        }
+                    }
+                    if (amount !== null) {
+                        db_method
+                            .RemoveArray(
+                                db_user,
+                                {
+                                    uid: req.token_payload.data.uid,
+                                    isDeleted: 0,
+                                },
+                                { fd: { fd_id: ObjectId(req.body.fd_id) } }
+                            )
+                            .then((result0) => {
+                                if (result0.value == null) {
+                                    res.json(
+                                        error.error_msg(
+                                            "Something went wrong! Please wait sometime and then try again"
+                                        )
+                                    );
+                                } else {
+                                    db_method
+                                        .UpdateRaw(
+                                            db_user,
+                                            {
+                                                uid: req.token_payload.data.uid,
+                                                isDeleted: 0,
+                                            },
+                                            { $inc: { balance: amount } }
+                                        )
+                                        .then((result1) => {
+                                            db_method
+                                                .Insert(db_txn, {
+                                                    from_pay_id: "BANK",
+                                                    to_pay_id:
+                                                        req.token_payload.data
+                                                            .username,
+                                                    amount: amount,
+                                                    date: Date.now(),
+                                                    remarks:
+                                                        "Encashed FD by User",
+                                                })
+                                                .then((result1) => {
+                                                    res.json({
+                                                        success: true,
+                                                        msg: "FD Encashed Successfully",
+                                                        balance:
+                                                            result0.balance,
+                                                    });
+                                                })
+                                                .catch((err) => {
+                                                    throw err;
+                                                });
+                                        })
+                                        .catch((err) => {
+                                            throw err;
+                                        });
+                                }
+                            })
+                            .catch((err) => {
+                                throw err;
+                            });
+                    } else {
+                        res.json(error.error_msg("Unable to find your FD"));
+                    }
+                }
+            })
+            .catch((err) => {
+                throw err;
+            });
+    }
+});
 leoBank.get("/balance", Request_Auth.jwt_auth, (req, res) => {
     db_method
         .Find(db_user, { uid: req.token_payload.data.uid, isDeleted: 0 })

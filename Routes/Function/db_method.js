@@ -13,7 +13,7 @@ const RemoveArray = (db_name, search_payload, payload) => {
     return db
         .getDB()
         .collection(db_name)
-        .updateOne(search_payload, { $pull: payload }, { multi: false });
+        .findOneAndUpdate(search_payload, { $pull: payload }, { multi: false });
 };
 const Update = (db_name, search_payload, payload) => {
     return db
