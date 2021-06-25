@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const db = require("../db");
 const config = require("config");
-const error = require("./Function/error");
+const res_msg = require("./Function/res_msg");
 const Token = require("./Function/token");
 const Request_Auth = require("./Function/request_auth");
 const db_method = require("./Function/db_method");
@@ -25,19 +25,18 @@ auth.post("/new_account", (req, res) => {
         !payload.password ||
         !payload.email
     ) {
-        res.json(
-            error.error_msg(
-                "Incomplete fields. Please provide Name, Username, Password and Email"
-            )
+        res_msg.error(
+            res,
+            "Incomplete fields. Please provide Name, Username, Password and Email"
         );
     } else if (payload.password.length < 8) {
-        res.json(error.error_msg("Password length is too small"));
+        res_msg.error(res, "Length of Password must be greater than 8");
     } else {
         db_method
             .Find(db_name, { username: payload.username, isDeleted: 0 })
             .then((result0) => {
                 if (result0) {
-                    res.json(error.error_msg("Username Already Taken!"));
+                    res_msg.error(res, "Username already registered!");
                 } else {
                     bcrypt.hash(
                         payload.password,
@@ -49,27 +48,17 @@ auth.post("/new_account", (req, res) => {
                                 .Insert(db_name, payload)
                                 .then((result1) => {
                                     if (result1.insertedCount === 1) {
-                                        res.json({
-                                            success: true,
-                                            msg: "New Account Registered Successfully",
-                                        });
-                                    } else {
-                                        res.json(
-                                            error.error_msg(
-                                                "Some Problem Occured"
-                                            )
+                                        res_msg.success(
+                                            res,
+                                            "Account Registrated Successfully"
                                         );
+                                    } else {
+                                        res_msg.server_error(res);
                                     }
-                                })
-                                .catch((err) => {
-                                    throw err;
                                 });
                         }
                     );
                 }
-            })
-            .catch((err) => {
-                throw err;
             });
     }
 });
@@ -82,9 +71,9 @@ auth.get("/account", Request_Auth.jwt_auth, (req, res) => {
         })
         .then((result0) => {
             if (result0 === null) {
-                res.json(error.error_msg("Something Got Wrong Try Again"));
+                res_msg.error(res, "Unable to find your account");
             } else {
-                res.json({
+                res.status(200).json({
                     success: true,
                     payload: {
                         name: result0.name,
@@ -94,17 +83,12 @@ auth.get("/account", Request_Auth.jwt_auth, (req, res) => {
                     },
                 });
             }
-        })
-        .catch((err) => {
-            throw err;
         });
 });
 auth.post("/ch_account", Request_Auth.jwt_auth, (req, res) => {
     var payload = req.body;
     if (payload.username || payload.password) {
-        res.json(
-            error.error_msg("You cannot change your Username or Password")
-        );
+        res_msg.error(res, "Cannot change Username or Password here!");
     } else {
         db_method
             .Update(
@@ -118,31 +102,19 @@ auth.post("/ch_account", Request_Auth.jwt_auth, (req, res) => {
             )
             .then((result0) => {
                 if (result0.value === null) {
-                    res.json(
-                        error.error_msg(
-                            "Some problem occured while updating your account"
-                        )
-                    );
+                    res_msg.error(res, "Unable to find your account!");
                 } else {
-                    res.json({
-                        success: true,
-                        msg: "Account Updated Successfully",
-                    });
+                    res_msg.success(res, "Account Updated Successfully");
                 }
-            })
-            .catch((err) => {
-                throw err;
             });
     }
 });
 auth.post("/rm_account", Request_Auth.jwt_auth, (req, res) => {
     var payload = req.body;
     if (!payload.username || !payload.password) {
-        res.json(error.error_msg("Please Provide Username and Password"));
+        res_msg.error(res, "Provide Username & Password");
     } else if (payload.username !== req.token_payload.data.username) {
-        res.json(
-            error.error_msg("You have ne access to this account! Try Re-Login")
-        );
+        res_msg.error(res, "Incorrect Username");
     } else {
         db_method
             .Find(db_name, {
@@ -152,11 +124,7 @@ auth.post("/rm_account", Request_Auth.jwt_auth, (req, res) => {
             })
             .then((result0) => {
                 if (result0 === null) {
-                    res.json(
-                        error.error_msg(
-                            "Please Try Re-Login! Your token doesn't seems right"
-                        )
-                    );
+                    res_msg.error(res, "Unable to find your account");
                 } else {
                     bcrypt.compare(
                         payload.password,
@@ -175,39 +143,28 @@ auth.post("/rm_account", Request_Auth.jwt_auth, (req, res) => {
                                     )
                                     .then((result2) => {
                                         if (result2.value) {
-                                            res.json({
-                                                success: true,
-                                                msg: "Account Deleted Successfully",
-                                            });
+                                            res_msg.success(
+                                                res,
+                                                "Account Deleted"
+                                            );
                                         } else {
-                                            res.json(
-                                                error.error_msg(
-                                                    "Some problem Occured. Please try again"
-                                                )
+                                            res_msg.error(
+                                                res,
+                                                "Unable to delete! Try Again Later"
                                             );
                                         }
-                                    })
-                                    .catch((err) => {
-                                        throw err;
                                     });
                             } else {
-                                res.json(
-                                    error.error_msg(
-                                        "Incorrect password. Please try again"
-                                    )
-                                );
+                                res_msg.error(res, "Incorrect Password");
                             }
                         }
                     );
                 }
-            })
-            .catch((err) => {
-                throw err;
             });
     }
 });
 auth.post("/ch_password", (req, res) => {
-    res.json(error.error_msg("This api is not yet functioning"));
+    res_msg.error(res, "API Under Construction");
 });
 auth.post("/login", (req, res) => {
     var payload = {
@@ -216,15 +173,13 @@ auth.post("/login", (req, res) => {
         isDeleted: 0,
     };
     if (!payload.username || !payload.password) {
-        res.json(error.error_msg("Please Provide Username and Password"));
+        res_msg.error(res, "Provide Username & Password");
     } else {
         db_method
             .Find(db_name, { username: payload.username, isDeleted: 0 })
             .then((result0) => {
                 if (result0 === null) {
-                    res.json(
-                        error.error_msg("Please check Username and Password")
-                    );
+                    res_msg.error(res, "Incorrect Username");
                 } else {
                     bcrypt.compare(
                         payload.password,
@@ -242,18 +197,11 @@ auth.post("/login", (req, res) => {
                                 );
                                 res.json({ success: true, token });
                             } else {
-                                res.json(
-                                    error.error_msg(
-                                        "Incorrect password. Please try again"
-                                    )
-                                );
+                                res_msg.error(res, "Incorrect Password");
                             }
                         }
                     );
                 }
-            })
-            .catch((err) => {
-                throw err;
             });
     }
 });

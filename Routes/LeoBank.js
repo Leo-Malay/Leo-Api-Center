@@ -1,5 +1,5 @@
 const express = require("express");
-const error = require("./Function/error");
+const res_msg = require("./Function/res_msg");
 const Request_Auth = require("./Function/request_auth");
 const db_method = require("./Function/db_method");
 const ObjectId = require("mongodb").ObjectId;
@@ -21,36 +21,27 @@ leoBank.post("/register", Request_Auth.jwt_auth, (req, res) => {
                     isDeleted: 0,
                     isVerified: 0,
                 };
-                db_method
-                    .Insert(db_user, payload)
-                    .then((result1) => {
-                        if (result1.insertedCount != 0) {
-                            res.json({
-                                success: true,
-                                msg: "User Registeration Successfull",
-                            });
-                        } else {
-                            res.json(
-                                error.error_msg(
-                                    "Something went wrong! Try again"
-                                )
-                            );
-                        }
-                    })
-                    .catch((err) => {
-                        throw err;
-                    });
+                db_method.Insert(db_user, payload).then((result1) => {
+                    if (result1.insertedCount != 0) {
+                        res.status(200).json({
+                            success: true,
+                            msg: "User Registeration Successfull",
+                        });
+                    } else {
+                        res_msg.error(res, "Something went wrong! Try again");
+                    }
+                });
             } else {
-                res.json({ success: true, msg: "Already a registered user" });
+                res.status(200).json({
+                    success: true,
+                    msg: "Already a registered user",
+                });
             }
-        })
-        .catch((err) => {
-            throw err;
         });
 });
 leoBank.post("/deposit_money", Request_Auth.jwt_auth, (req, res) => {
     if (!req.body.amount || !req.body.pay_id) {
-        res.json(error.error_msg("Missing Fields!"));
+        res_msg.error(res, "Missing Fields!");
     } else {
         db_method
             .UpdateRaw(
@@ -60,10 +51,9 @@ leoBank.post("/deposit_money", Request_Auth.jwt_auth, (req, res) => {
             )
             .then((result0) => {
                 if (result0.value == null) {
-                    res.json(
-                        error.error_msg(
-                            "Something went wrong! Please wait sometime and then try again"
-                        )
+                    res_msg.error(
+                        res,
+                        "Something went wrong! Please wait sometime and then try again"
                     );
                 } else {
                     db_method
@@ -75,27 +65,21 @@ leoBank.post("/deposit_money", Request_Auth.jwt_auth, (req, res) => {
                             remarks: "Deposited Money to LeoBank",
                         })
                         .then((result1) => {
-                            res.json({
+                            res.status(200).json({
                                 success: true,
                                 msg: "Money Added Successfully",
                                 balance:
                                     result0.value.balance +
                                     parseInt(req.body.amount),
                             });
-                        })
-                        .catch((err) => {
-                            throw err;
                         });
                 }
-            })
-            .catch((err) => {
-                throw err;
             });
     }
 });
 leoBank.post("/withdraw_money", Request_Auth.jwt_auth, (req, res) => {
     if (!req.body.amount || !req.body.pay_id) {
-        res.json(error.error_msg("Missing Fields!"));
+        res_msg.error(res, "Missing Fields!");
     } else {
         db_method
             .Find(db_user, {
@@ -105,7 +89,7 @@ leoBank.post("/withdraw_money", Request_Auth.jwt_auth, (req, res) => {
             })
             .then((result0) => {
                 if (result0.balance <= parseInt(req.body.amount)) {
-                    res.json(error.error_msg("Insufficient Balance"));
+                    res_msg.error(res, "Insufficient Balance");
                 } else {
                     db_method
                         .UpdateRaw(
@@ -118,10 +102,9 @@ leoBank.post("/withdraw_money", Request_Auth.jwt_auth, (req, res) => {
                         )
                         .then((result0) => {
                             if (result0.value == null) {
-                                res.json(
-                                    error.error_msg(
-                                        "Something went wrong! Please wait sometime and then try again"
-                                    )
+                                res_msg.error(
+                                    res,
+                                    "Something went wrong! Please wait sometime and then try again"
                                 );
                             } else {
                                 db_method
@@ -135,26 +118,17 @@ leoBank.post("/withdraw_money", Request_Auth.jwt_auth, (req, res) => {
                                             "Withdrawed Money from LeoBank",
                                     })
                                     .then((result1) => {
-                                        res.json({
+                                        res.status(200).json({
                                             success: true,
                                             msg: "Money Withdrawal Successfull",
                                             balance:
                                                 result0.value.balance -
                                                 parseInt(req.body.amount),
                                         });
-                                    })
-                                    .catch((err) => {
-                                        throw err;
                                     });
                             }
-                        })
-                        .catch((err) => {
-                            throw err;
                         });
                 }
-            })
-            .catch((err) => {
-                throw err;
             });
     }
 });
@@ -168,12 +142,12 @@ leoBank.get("/txn", Request_Auth.jwt_auth, (req, res) => {
         })
         .toArray((err, result0) => {
             if (err) throw err;
-            res.json({ success: true, txn: result0 });
+            res.status(200).json({ success: true, txn: result0 });
         });
 });
 leoBank.post("/txn", Request_Auth.jwt_auth, (req, res) => {
     if (!req.body.amount || !req.body.pay_id) {
-        res.json(error.error_msg("Missing Fields!"));
+        res_msg.error(res, "Missing Fields!");
     } else {
         db_method
             .Find(db_user, {
@@ -183,7 +157,7 @@ leoBank.post("/txn", Request_Auth.jwt_auth, (req, res) => {
             })
             .then((result0) => {
                 if (result0.balance <= parseInt(req.body.amount)) {
-                    res.json(error.error_msg("Insufficient Balance"));
+                    res_msg.error(res, "Insufficient Balance");
                 } else {
                     db_method
                         .UpdateRaw(
@@ -197,10 +171,9 @@ leoBank.post("/txn", Request_Auth.jwt_auth, (req, res) => {
                         )
                         .then((result1) => {
                             if (result1.value == null) {
-                                res.json(
-                                    error.error_msg(
-                                        "Something went wrong! Please wait sometime and then try again"
-                                    )
+                                res_msg.error(
+                                    res,
+                                    "Something went wrong! Please wait sometime and then try again"
                                 );
                             } else {
                                 db_method
@@ -220,10 +193,9 @@ leoBank.post("/txn", Request_Auth.jwt_auth, (req, res) => {
                                     )
                                     .then((result2) => {
                                         if (result2.value == null) {
-                                            res.json(
-                                                error.error_msg(
-                                                    "Something went wrong! Please wait sometime and then try again"
-                                                )
+                                            res_msg.error(
+                                                res,
+                                                "Something went wrong! Please wait sometime and then try again"
                                             );
                                         } else {
                                             db_method
@@ -239,46 +211,32 @@ leoBank.post("/txn", Request_Auth.jwt_auth, (req, res) => {
                                                     remarks: req.body.remarks,
                                                 })
                                                 .then((result3) => {
-                                                    res.json({
+                                                    res.status(200).json({
                                                         success: true,
                                                         msg: "Money Transfered Successfully",
                                                         balance:
                                                             result3.balance,
                                                     });
-                                                })
-                                                .catch((err) => {
-                                                    throw err;
                                                 });
                                         }
-                                    })
-                                    .catch((err) => {
-                                        throw err;
                                     });
                             }
-                        })
-                        .catch((err) => {
-                            throw err;
                         });
                 }
-            })
-            .catch((err) => {
-                throw err;
             });
     }
 });
 leoBank.post("/create_fd", Request_Auth.jwt_auth, (req, res) => {
     if (!req.body.amount) {
-        res.json(error.error_msg("Missing Fields!"));
+        res_msg.error(res, "Missing Fields!");
     } else {
         db_method
             .Find(db_user, { uid: req.token_payload.data.uid, isDeleted: 0 })
             .then((result0) => {
                 if (result0 == null) {
-                    res.json(
-                        error.error_msg("Try Again Later. Suggested: Re-Login")
-                    );
+                    res_msg.error(res, "Try Again Later. Suggested: Re-Login");
                 } else if (result0.balance <= parseInt(req.body.amount)) {
-                    res.json(error.error_msg("Insufficient Balance"));
+                    res_msg.error(res, "Insufficient Balance");
                 } else {
                     db_method
                         .UpdateRaw(
@@ -288,10 +246,9 @@ leoBank.post("/create_fd", Request_Auth.jwt_auth, (req, res) => {
                         )
                         .then((result0) => {
                             if (result0.value == null) {
-                                res.json(
-                                    error.error_msg(
-                                        "Something went wrong! Please wait sometime and then try again"
-                                    )
+                                res_msg.error(
+                                    res,
+                                    "Something went wrong! Please wait sometime and then try again"
                                 );
                             } else {
                                 db_method
@@ -325,28 +282,16 @@ leoBank.post("/create_fd", Request_Auth.jwt_auth, (req, res) => {
                                                 remarks: "FD Created by User",
                                             })
                                             .then((result1) => {
-                                                res.json({
+                                                res.status(200).json({
                                                     success: true,
                                                     msg: "FD created Successfully",
                                                     balance: result0.balance,
                                                 });
-                                            })
-                                            .catch((err) => {
-                                                throw err;
                                             });
-                                    })
-                                    .catch((err) => {
-                                        throw err;
                                     });
                             }
-                        })
-                        .catch((err) => {
-                            throw err;
                         });
                 }
-            })
-            .catch((err) => {
-                throw err;
             });
     }
 });
@@ -359,26 +304,21 @@ leoBank.get("/fd", Request_Auth.jwt_auth, (req, res) => {
         })
         .then((result0) => {
             if (result0 == null) {
-                res.json(error.error_msg("Unable to fetch your FDs"));
+                res_msg.error(res, "Unable to fetch your FDs");
             } else {
-                res.json({ success: true, fd: result0.fd });
+                res.status(200).json({ success: true, fd: result0.fd });
             }
-        })
-        .catch((err) => {
-            throw err;
         });
 });
 leoBank.post("/encash_fd", Request_Auth.jwt_auth, (req, res) => {
     if (!req.body.fd_id) {
-        res.json(error.error_msg("Missing Fields!"));
+        res_msg.error(res, "Missing Fields!");
     } else {
         db_method
             .Find(db_user, { uid: req.token_payload.data.uid, isDeleted: 0 })
             .then((result0) => {
                 if (result0 == null) {
-                    res.json(
-                        error.error_msg("Try Again Later. Suggested: Re-Login")
-                    );
+                    res_msg.error(res, "Try Again Later. Suggested: Re-Login");
                 } else {
                     var amount = null;
                     for (var i = 0; i < result0.fd.length; i++) {
@@ -399,10 +339,9 @@ leoBank.post("/encash_fd", Request_Auth.jwt_auth, (req, res) => {
                             )
                             .then((result0) => {
                                 if (result0.value == null) {
-                                    res.json(
-                                        error.error_msg(
-                                            "Something went wrong! Please wait sometime and then try again"
-                                        )
+                                    res_msg.error(
+                                        res,
+                                        "Something went wrong! Please wait sometime and then try again"
                                     );
                                 } else {
                                     db_method
@@ -427,32 +366,20 @@ leoBank.post("/encash_fd", Request_Auth.jwt_auth, (req, res) => {
                                                         "Encashed FD by User",
                                                 })
                                                 .then((result1) => {
-                                                    res.json({
+                                                    res.status(200).json({
                                                         success: true,
                                                         msg: "FD Encashed Successfully",
                                                         balance:
                                                             result0.balance,
                                                     });
-                                                })
-                                                .catch((err) => {
-                                                    throw err;
                                                 });
-                                        })
-                                        .catch((err) => {
-                                            throw err;
                                         });
                                 }
-                            })
-                            .catch((err) => {
-                                throw err;
                             });
                     } else {
-                        res.json(error.error_msg("Unable to find your FD"));
+                        res_msg.error(res, "Unable to find your FD");
                     }
                 }
-            })
-            .catch((err) => {
-                throw err;
             });
     }
 });
@@ -461,13 +388,13 @@ leoBank.get("/balance", Request_Auth.jwt_auth, (req, res) => {
         .Find(db_user, { uid: req.token_payload.data.uid, isDeleted: 0 })
         .then((result0) => {
             if (result0 != null) {
-                res.json({ success: true, balance: result0.balance });
+                res.status(200).json({
+                    success: true,
+                    balance: result0.balance,
+                });
             } else {
-                res.json(error.error_msg("Unable to fetch your balance"));
+                res_msg.error(res, "Unable to fetch your balance");
             }
-        })
-        .catch((err) => {
-            throw err;
         });
 });
 

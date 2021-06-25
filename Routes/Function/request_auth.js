@@ -1,27 +1,30 @@
 const config = require("config");
-const forbidden_error = require("./error").forbidden_error;
-const error_msg = require("./error").error_msg;
+const res_msg = require("./res_msg");
 const VerifyToken = require("./token").VerifyToken;
 const req_auth = (req, res, next) => {
     var payload = req.header;
     if (!payload.username || !payload.password) {
-        res.json(forbidden_error());
+        res_msg.forbidden(res);
     } else if (
         payload.username === config.get("AUTH.API_AUTH.USERNAME") &&
         payload.password === config.get("AUTH.API_AUTH.PASSWORD")
     ) {
         next();
     } else {
-        res.json(error_msg("Provided Username or Password is Incorrect!"));
+        res_msg.error(res, "Incorrect API credentials");
     }
 };
 const jwt_auth = (req, res, next) => {
     const bearerHeader = req.headers.authorization;
     if (bearerHeader) {
         req.token_payload = VerifyToken(bearerHeader.split(" ")[1]);
-        next();
+        if (req.token_payload.success === false) {
+            res_msg.error(res, req.token_payload.msg);
+        } else {
+            next();
+        }
     } else {
-        res.json(error_msg("Protected API. Please send required Token"));
+        res_msg.forbidden();
     }
 };
 module.exports = { req_auth, jwt_auth };

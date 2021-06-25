@@ -13,7 +13,7 @@ const VerifyToken = (token) => {
             data: jwt.verify(token, config.get("AUTH.JWT.SECRET")),
         };
     } catch (err) {
-        return { success: false, data: err };
+        return { success: false, msg: err.name };
     }
 };
 
