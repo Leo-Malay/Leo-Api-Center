@@ -2,6 +2,7 @@ const express = require("express");
 const helmet = require("helmet");
 const db = require("./db");
 const compression = require("compression");
+const path = require("path");
 
 const auth = require("./Routes/Auth");
 const foodieLeo = require("./Routes/FoodieLeo");
@@ -10,10 +11,14 @@ const leoBank = require("./Routes/LeoBank");
 const App = express();
 App.use(compression());
 App.use(helmet());
+App.use(express.static("public"));
 App.use(express.urlencoded({ extended: true }));
 App.use("/Auth", auth);
 App.use("/FoodieLeo", foodieLeo);
 App.use("/LeoBank", leoBank);
+App.use("/", (req, res) => {
+    res.sendFile(path.join(__dirname + "/public/index.html"));
+});
 
 db.connect((err) => {
     if (err) throw err;
