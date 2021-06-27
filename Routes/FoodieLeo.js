@@ -1,5 +1,5 @@
 const express = require("express");
-const error = require("./Function/error");
+const res_msg = require("./Function/res_msg");
 const Request_Auth = require("./Function/request_auth");
 const db_method = require("./Function/db_method");
 
@@ -15,13 +15,10 @@ foodieLeo.get("/cart", Request_Auth.jwt_auth, (req, res) => {
         })
         .then((result0) => {
             if (result0 === null) {
-                res.json(error.error_msg("Didn't find any cart"));
+                res_msg.error(res, "Didn't find any cart");
             } else {
-                res.json({ success: true, cart: result0.cart });
+                res.status(200).json({ success: true, cart: result0.cart });
             }
-        })
-        .catch((err) => {
-            throw err;
         });
 });
 foodieLeo.post("/cart", Request_Auth.jwt_auth, (req, res) => {
@@ -45,15 +42,11 @@ foodieLeo.post("/cart", Request_Auth.jwt_auth, (req, res) => {
                                 msg: "Cart Updated Successfully",
                             });
                         } else {
-                            res.json(
-                                error.error_msg(
-                                    "Unable to complete your request"
-                                )
+                            res_msg.error(
+                                res,
+                                "Unable to complete your request"
                             );
                         }
-                    })
-                    .catch((err) => {
-                        throw err;
                     });
             } else {
                 db_method
@@ -67,29 +60,21 @@ foodieLeo.post("/cart", Request_Auth.jwt_auth, (req, res) => {
                     )
                     .then((result1) => {
                         if (result1 === null) {
-                            res.json(
-                                error.error_msg("Unable to update your cart")
-                            );
+                            res_msg.error(res, "Unable to update your cart");
                         } else {
-                            res.json({
+                            res.status(200).json({
                                 success: true,
                                 msg: "Cart Updated Successfully",
                             });
                         }
-                    })
-                    .catch((err) => {
-                        throw err;
                     });
             }
-        })
-        .catch((err) => {
-            throw err;
         });
 });
 foodieLeo.get("/menu", (req, res) => {
     db_method.FindAll(db_menu, {}).toArray((err, result0) => {
         if (err) throw err;
-        res.json({ success: true, menu: result0 });
+        res.status(200).json({ success: true, menu: result0 });
     });
 });
 foodieLeo.post("/order", Request_Auth.jwt_auth, (req, res) => {
@@ -100,10 +85,10 @@ foodieLeo.post("/order", Request_Auth.jwt_auth, (req, res) => {
         })
         .then((result0) => {
             if (result0 === null) {
-                res.json(error.error_msg("Unable to find your cart"));
+                res_msg.error(res, "Unable to find your cart");
             } else {
                 if (result0.cart == "") {
-                    res.json(error.error_msg("Add Some Items to Cart First"));
+                    res_msg.error(res, "Add Some Items to Cart First");
                 } else {
                     db_method
                         .Update(
@@ -123,25 +108,19 @@ foodieLeo.post("/order", Request_Auth.jwt_auth, (req, res) => {
                         )
                         .then((result0) => {
                             if (result0 === null) {
-                                res.json({
-                                    success: false,
-                                    msg: "Unable to Place your order",
-                                });
+                                res_msg.error(
+                                    res,
+                                    "Unable to Place your order"
+                                );
                             } else {
-                                res.json({
+                                res.status(200).json({
                                     success: true,
                                     msg: "Order Confirmed",
                                 });
                             }
-                        })
-                        .catch((err) => {
-                            throw err;
                         });
                 }
             }
-        })
-        .catch((err) => {
-            throw err;
         });
 });
 
