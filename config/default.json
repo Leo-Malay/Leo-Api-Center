@@ -4,7 +4,7 @@
     },
     "DB": {
         "URL": "mongodb+srv://dbUser:A9zXW7CXWdQIlje9@leo-api-center.9i2b5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-        "LOCALURL": "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false",
+        "LocalURL": "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass%20Community&ssl=false",
         "NAME": "Leo-Api-Center",
         "User": "dbUser",
         "Pass": "A9zXW7CXWdQIlje9"
