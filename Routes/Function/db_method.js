@@ -1,8 +1,7 @@
-const db = require("../../db");
+const db = require("../../db").getDB;
 
 const Insert = (db_name, payload) => {
-    return db
-        .getDB()
+    return db()
         .collection(db_name)
         .insertOne(payload)
         .catch((err) => {
@@ -10,8 +9,7 @@ const Insert = (db_name, payload) => {
         });
 };
 const InsertArray = (db_name, search_payload, payload) => {
-    return db
-        .getDB()
+    return db()
         .collection(db_name)
         .updateOne(search_payload, { $addToSet: payload })
         .catch((err) => {
@@ -19,8 +17,7 @@ const InsertArray = (db_name, search_payload, payload) => {
         });
 };
 const RemoveArray = (db_name, search_payload, payload) => {
-    return db
-        .getDB()
+    return db()
         .collection(db_name)
         .findOneAndUpdate(search_payload, { $pull: payload }, { multi: false })
         .catch((err) => {
@@ -28,8 +25,7 @@ const RemoveArray = (db_name, search_payload, payload) => {
         });
 };
 const Update = (db_name, search_payload, payload) => {
-    return db
-        .getDB()
+    return db()
         .collection(db_name)
         .findOneAndUpdate(search_payload, { $set: payload })
         .catch((err) => {
@@ -37,8 +33,7 @@ const Update = (db_name, search_payload, payload) => {
         });
 };
 const UpdateRaw = (db_name, search_payload, payload) => {
-    return db
-        .getDB()
+    return db()
         .collection(db_name)
         .findOneAndUpdate(search_payload, payload)
         .catch((err) => {
@@ -46,8 +41,7 @@ const UpdateRaw = (db_name, search_payload, payload) => {
         });
 };
 const Find = (db_name, payload) => {
-    return db
-        .getDB()
+    return db()
         .collection(db_name)
         .findOne(payload)
         .catch((err) => {
@@ -55,8 +49,7 @@ const Find = (db_name, payload) => {
         });
 };
 const FindAll = (db_name, payload) => {
-    return db
-        .getDB()
+    return db()
         .collection(db_name)
         .find(payload)
         .catch((err) => {

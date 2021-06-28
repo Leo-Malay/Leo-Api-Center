@@ -10,7 +10,8 @@
             * {
                 margin: 0;
                 outline: none;
-                font-family: Arial, Helvetica, sans-serif;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                text-align: center;
             }
             .inline#inline {
                 display: inline-flex;
@@ -18,9 +19,9 @@
             /* Header */
             .header#header {
                 text-align: center;
-                padding: 40px 20px;
-                color: #fff000;
-                background-color: black;
+                padding: 20px 10px;
+                color: #fff;
+                background-color: #12232e;
             }
             .title#title {
                 font-size: 30px;
@@ -35,267 +36,211 @@
                 padding: 30px 10px;
                 font-size: 16px;
             }
-            .contentbox#contentbox {
-                display: inline-block;
-            }
-            .api#api {
-                width: fit-content;
-                padding: 5px;
-            }
-            .type#type {
-                width: 80px;
-                padding: 2px;
-                text-align: center;
-                background-color: mediumseagreen;
-                color: white;
-                font-weight: 600;
-            }
-            .url#url {
-                padding: 2px 20px;
-                width: 306px;
-                background-color: #e7e7e7;
-                border-bottom: 1px solid #909090;
-                color: black;
-                font-weight: 600;
-            }
-            .data#data {
-                padding: 10px;
-                width: 410px;
-                background-color: #e7e7e7;
-                color: black;
-                font-weight: 600;
+            #desc {
+                margin: auto;
+                padding-bottom: 5px;
                 font-size: 14px;
+                max-width: 700px;
+            }
+            /* Table */
+            table {
+                border: 1px solid black;
+                border-collapse: collapse;
+                text-align: center;
+                margin: 20px auto;
+            }
+            th {
+                border: none;
+                border-bottom: 1px solid black;
+            }
+            td {
+                padding: 10px 20px;
+            }
+            tr,
+            td {
+                border: none;
+            }
+            .type {
+                font-weight: 700;
             }
             /* Footer */
             .footer#footer {
                 text-align: center;
                 padding: 30px 10px;
-                color: #fff000;
                 font-size: 12px;
-                background-color: black;
+                color: #fff;
+                background-color: #12232e;
             }
         </style>
     </head>
     <body>
         <div class="header" id="header">
             <p class="title" id="title">Leo-API-Center</p>
-            <p class="subtitle" id="subtitle">
-                By Malay Bhavsar<br />----- Under Construction -----
-            </p>
+            <p class="subtitle" id="subtitle">By Malay Bhavsar</p>
         </div>
         <div class="content" id="content">
-            <div class="contentbox" id="contentbox">
-                <!-- AUTH -->
-                <p class="title" id="title">Auth APIs</p>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">POST</p>
-                        <p class="url" id="url">/Auth/new_account</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-},
-"body" : {
-    name: "",
-    username: "",
-    password: "",
-    email: "",
-    address: "",
-}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">GET</p>
-                        <p class="url" id="url">/Auth/account</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer xxxx-token-here-zzzz"
-},
-"body" : {}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">POST</p>
-                        <p class="url" id="url">/Auth/ch_account</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer xxxx-token-here-zzzz"
-},
-"body" : {
-    "Thing_to_change": ""
-}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">POST</p>
-                        <p class="url" id="url">/Auth/rm_account</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer xxxx-token-here-zzzz"
-},
-"body" : {
-    "username": "",
-    "password": "",
-}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">POST</p>
-                        <p class="url" id="url">/Auth/ch_password</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer xxxx-token-here-zzzz"
-},
-"body" : {
-    "password":""
-}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">POST</p>
-                        <p class="url" id="url">/Auth/login</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-},
-"body" : {
-    "username": "",
-    "password": "",
-}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
+            <p id="desc">
+                Welcome to Leo-API-Center. Here I have a collection of APIs
+                combined to one project which helps me in reducing the duplicate
+                code and allows easy maintenance and improve productivity. I
+                have converted the reusable codes to several functions which
+                helps me to develop new API's much faster with less effort.
+            </p>
+            <p id="desc">
+                My Primary Goal is to develop APIs and optimize them for faster
+                and better results. This APIs are made using
+                <b>ExpressJS framework</b>. Current Number of APIs: <b>19</b>
+            </p>
+            <table border="1">
+                <tr>
+                    <th width="150px">Path</th>
+                    <th width="50px">Type</th>
+                    <th width="50px">Require Token</th>
+                    <th width="300px">Body</th>
+                    <th width="10px">###</th>
+                </tr>
+                <!-- LeoAuth -->
+                <tr>
+                    <td width="150px">/Auth/new_account</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">No</td>
+                    <td width="300px">
+                        name, username, password, email, address
+                    </td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/Auth/account</td>
+                    <td width="50px" class="type">GET</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">-</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/Auth/ch_account</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">
+                        Things to be changed E.g. name, address etc
+                    </td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/Auth/rm_account</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">username, password</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/Auth/ch_password</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">password (Under Construction)</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/Auth/login</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">No</td>
+                    <td width="300px">username, password</td>
+                    <td width="10px"></td>
+                </tr>
                 <!-- FoodieLeo -->
-                <p class="title" id="title">FoodieLeo APIs</p>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">GET</p>
-                        <p class="url" id="url">/FoodieLeo/cart</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer xxxx-token-here-zzzz"
-},
-"body" : {}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">POST</p>
-                        <p class="url" id="url">/FoodieLeo/cart</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer xxxx-token-here-zzzz"
-},
-"body" : {
-    cart:"{Stringfied JSON}"
-}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">GET</p>
-                        <p class="url" id="url">/FoodieLeo/menu</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-},
-"body" : {}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type">POST</p>
-                        <p class="url" id="url">/FoodieLeo/order</p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer xxxx-token-here-zzzz"
-},
-"body" : {}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
+                <tr>
+                    <td width="150px">/FoodieLeo/cart</td>
+                    <td width="50px" class="type">GET</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">-</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/FoodieLeo/cart</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">cart (Stringified JSON)</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/FoodieLeo/menu</td>
+                    <td width="50px" class="type">GET</td>
+                    <td width="50px">No</td>
+                    <td width="300px">-</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/FoodieLeo/order</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">-</td>
+                    <td width="10px"></td>
+                </tr>
                 <!-- LeoBank -->
-                <p class="title" id="title">LeoBank APIs</p>
-                <div class="api" id="api">
-                    <div class="inline" id="inline">
-                        <p class="type" id="type"></p>
-                        <p class="url" id="url">
-                            /LeoBank/{Under Construction}
-                        </p>
-                    </div>
-                    <div class="data" id="data">
-                        <pre>
-"header" : { 
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Authorization": "Bearer xxxx-token-here-zzzz"
-},
-"body" : {}
-                    </pre
-                        >
-                    </div>
-                    <div class="about" id="about"></div>
-                </div>
-            </div>
+                <tr>
+                    <td width="150px">/LeoBank/register</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">-</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/LeoBank/deposit_money</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">pay_id, amount</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/LeoBank/withdraw_money</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">amount</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/LeoBank/txn</td>
+                    <td width="50px" class="type">GET</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">-</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/LeoBank/txn</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">pay_id, amount, remarks</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/LeoBank/create_fd</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">amount</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/LeoBank/fd</td>
+                    <td width="50px" class="type">GET</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">-</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/LeoBank/encash_fd</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">fd_id</td>
+                    <td width="10px"></td>
+                </tr>
+                <tr>
+                    <td width="150px">/LeoBank/balance</td>
+                    <td width="50px" class="type">GET</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">-</td>
+                    <td width="10px"></td>
+                </tr>
+            </table>
+            <br />
         </div>
         <div class="footer" id="footer">
             <p>

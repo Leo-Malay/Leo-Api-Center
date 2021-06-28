@@ -1,16 +1,16 @@
 const express = require("express");
 const res_msg = require("./Function/res_msg");
-const Request_Auth = require("./Function/request_auth");
+const jwt_auth = require("./Function/request_auth").jwt_auth;
 const db_method = require("./Function/db_method");
 
 const foodieLeo = express.Router();
 const db_cart = "FoodieCart";
 const db_menu = "FoodieMenu";
 
-foodieLeo.get("/cart", Request_Auth.jwt_auth, (req, res) => {
+foodieLeo.get("/cart", jwt_auth, (req, res) => {
     db_method
         .Find(db_cart, {
-            uid: req.token_payload.data.uid,
+            uid: req.token.data.uid,
             isDeleted: 0,
         })
         .then((result0) => {
@@ -21,17 +21,17 @@ foodieLeo.get("/cart", Request_Auth.jwt_auth, (req, res) => {
             }
         });
 });
-foodieLeo.post("/cart", Request_Auth.jwt_auth, (req, res) => {
+foodieLeo.post("/cart", jwt_auth, (req, res) => {
     db_method
         .Find(db_cart, {
-            uid: req.token_payload.data.uid,
+            uid: req.token.data.uid,
             isDeleted: 0,
         })
         .then((result0) => {
             if (result0 === null) {
                 db_method
                     .Insert(db_cart, {
-                        uid: req.token_payload.data.uid,
+                        uid: req.token.data.uid,
                         cart: req.body.cart,
                         isDeleted: 0,
                     })
@@ -53,7 +53,7 @@ foodieLeo.post("/cart", Request_Auth.jwt_auth, (req, res) => {
                     .Update(
                         db_cart,
                         {
-                            uid: req.token_payload.data.uid,
+                            uid: req.token.data.uid,
                             isDeleted: 0,
                         },
                         { cart: req.body.cart }
@@ -77,10 +77,10 @@ foodieLeo.get("/menu", (req, res) => {
         res.status(200).json({ success: true, menu: result0 });
     });
 });
-foodieLeo.post("/order", Request_Auth.jwt_auth, (req, res) => {
+foodieLeo.post("/order", jwt_auth, (req, res) => {
     db_method
         .Find(db_cart, {
-            uid: req.token_payload.data.uid,
+            uid: req.token.data.uid,
             isDeleted: 0,
         })
         .then((result0) => {
@@ -94,7 +94,7 @@ foodieLeo.post("/order", Request_Auth.jwt_auth, (req, res) => {
                         .Update(
                             db_cart,
                             {
-                                uid: req.token_payload.data.uid,
+                                uid: req.token.data.uid,
                                 isDeleted: 0,
                             },
                             {

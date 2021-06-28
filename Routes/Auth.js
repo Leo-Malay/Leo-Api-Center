@@ -3,12 +3,12 @@ const bcrypt = require("bcrypt");
 const db = require("../db");
 const config = require("config");
 const res_msg = require("./Function/res_msg");
-const Token = require("./Function/token");
-const Request_Auth = require("./Function/request_auth");
+const GenToken = require("./Function/token").GenToken;
+const jwt_auth = require("./Function/request_auth").jwt_auth;
 const db_method = require("./Function/db_method");
 
 const auth = express.Router();
-const db_name = "Auth";
+const db_auth = "Auth";
 
 auth.post("/new_account", (req, res) => {
     var payload = {
@@ -17,6 +17,7 @@ auth.post("/new_account", (req, res) => {
         password: req.body.password,
         email: req.body.email,
         address: req.body.address,
+        token: null,
         isDeleted: 0,
     };
     if (
@@ -33,7 +34,7 @@ auth.post("/new_account", (req, res) => {
         res_msg.error(res, "Length of Password must be greater than 8");
     } else {
         db_method
-            .Find(db_name, { username: payload.username, isDeleted: 0 })
+            .Find(db_auth, { username: payload.username, isDeleted: 0 })
             .then((result0) => {
                 if (result0) {
                     res_msg.error(res, "Username already registered!");
@@ -45,7 +46,7 @@ auth.post("/new_account", (req, res) => {
                             if (err) throw err;
                             payload.password = pass_hash;
                             db_method
-                                .Insert(db_name, payload)
+                                .Insert(db_auth, payload)
                                 .then((result1) => {
                                     if (result1.insertedCount === 1) {
                                         res_msg.success(
@@ -62,11 +63,11 @@ auth.post("/new_account", (req, res) => {
             });
     }
 });
-auth.get("/account", Request_Auth.jwt_auth, (req, res) => {
+auth.get("/account", jwt_auth, (req, res) => {
     db_method
-        .Find(db_name, {
-            _id: db.getOID(req.token_payload.data.uid),
-            username: req.token_payload.data.username,
+        .Find(db_auth, {
+            _id: db.getOID(req.token.data.uid),
+            username: req.token.data.username,
             isDeleted: 0,
         })
         .then((result0) => {
@@ -85,17 +86,17 @@ auth.get("/account", Request_Auth.jwt_auth, (req, res) => {
             }
         });
 });
-auth.post("/ch_account", Request_Auth.jwt_auth, (req, res) => {
+auth.post("/ch_account", jwt_auth, (req, res) => {
     var payload = req.body;
-    if (payload.username || payload.password) {
+    if (payload.username || payload.password || payload.token) {
         res_msg.error(res, "Cannot change Username or Password here!");
     } else {
         db_method
             .Update(
-                db_name,
+                db_auth,
                 {
-                    _id: db.getOID(req.token_payload.data.uid),
-                    username: req.token_payload.data.username,
+                    _id: db.getOID(req.token.data.uid),
+                    username: req.token.data.username,
                     isDeleted: 0,
                 },
                 payload
@@ -109,17 +110,17 @@ auth.post("/ch_account", Request_Auth.jwt_auth, (req, res) => {
             });
     }
 });
-auth.post("/rm_account", Request_Auth.jwt_auth, (req, res) => {
+auth.post("/rm_account", jwt_auth, (req, res) => {
     var payload = req.body;
     if (!payload.username || !payload.password) {
         res_msg.error(res, "Provide Username & Password");
-    } else if (payload.username !== req.token_payload.data.username) {
+    } else if (payload.username !== req.token.data.username) {
         res_msg.error(res, "Incorrect Username");
     } else {
         db_method
-            .Find(db_name, {
-                _id: db.getOID(req.token_payload.data.uid),
-                username: req.token_payload.data.username,
+            .Find(db_auth, {
+                _id: db.getOID(req.token.data.uid),
+                username: req.token.data.username,
                 isDeleted: 0,
             })
             .then((result0) => {
@@ -134,12 +135,12 @@ auth.post("/rm_account", Request_Auth.jwt_auth, (req, res) => {
                             if (result1 === true) {
                                 db_method
                                     .Update(
-                                        db_name,
+                                        db_auth,
                                         {
                                             username: payload.username,
                                             isDeleted: 0,
                                         },
-                                        { isDeleted: 1 }
+                                        { isDeleted: 1, token: null }
                                     )
                                     .then((result2) => {
                                         if (result2.value) {
@@ -176,10 +177,10 @@ auth.post("/login", (req, res) => {
         res_msg.error(res, "Provide Username & Password");
     } else {
         db_method
-            .Find(db_name, { username: payload.username, isDeleted: 0 })
+            .Find(db_auth, { username: payload.username, isDeleted: 0 })
             .then((result0) => {
                 if (result0 === null) {
-                    res_msg.error(res, "Incorrect Username");
+                    res_msg.error(res, "Unable to find your account");
                 } else {
                     bcrypt.compare(
                         payload.password,
@@ -187,7 +188,7 @@ auth.post("/login", (req, res) => {
                         function (err, result1) {
                             if (err) throw err;
                             if (result1 === true) {
-                                var token = Token.GenToken(
+                                var token = GenToken(
                                     {
                                         uid: db.getID(result0._id),
                                         username: result0.username,
@@ -195,7 +196,28 @@ auth.post("/login", (req, res) => {
                                     },
                                     1
                                 );
-                                res.json({ success: true, token });
+                                db_method
+                                    .Update(
+                                        db_auth,
+                                        {
+                                            username: payload.username,
+                                            isDeleted: 0,
+                                        },
+                                        { token: token }
+                                    )
+                                    .then((result1) => {
+                                        if (
+                                            result1.lastErrorObject
+                                                .updatedExisting === true
+                                        ) {
+                                            res.json({ success: true, token });
+                                        } else {
+                                            res_msg.error(
+                                                res,
+                                                "Unable to generate token"
+                                            );
+                                        }
+                                    });
                             } else {
                                 res_msg.error(res, "Incorrect Password");
                             }
