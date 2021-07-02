@@ -49,12 +49,7 @@ const Find = (db_name, payload) => {
         });
 };
 const FindAll = (db_name, payload) => {
-    return db()
-        .collection(db_name)
-        .find(payload)
-        .catch((err) => {
-            throw err;
-        });
+    return db().collection(db_name).find(payload);
 };
 
 module.exports = {
