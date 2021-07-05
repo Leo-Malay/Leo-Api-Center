@@ -11,7 +11,7 @@ const Insert = (db_name, payload) => {
 const InsertArray = (db_name, search_payload, payload) => {
     return db()
         .collection(db_name)
-        .updateOne(search_payload, { $addToSet: payload })
+        .updateOne(search_payload, { $addToSet: payload }, { upsert: true })
         .catch((err) => {
             throw err;
         });
