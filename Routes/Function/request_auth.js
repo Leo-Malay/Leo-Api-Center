@@ -34,7 +34,7 @@ const jwt_auth = (req, res, next) => {
                 });
         }
     } else {
-        res_msg.forbidden();
+        res_msg.forbidden(res);
     }
 };
 module.exports = { req_auth, jwt_auth };

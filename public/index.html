@@ -15,8 +15,7 @@
             }
             .inline#inline {
                 display: inline-flex;
-            }
-            /* Header */
+            } /* Header */
             .header#header {
                 text-align: center;
                 padding: 20px 10px;
@@ -30,8 +29,7 @@
             .subtitle#subtitle {
                 font-size: 15px;
                 font-weight: 800;
-            }
-            /* Content */
+            } /* Content */
             .content#content {
                 padding: 30px 10px;
                 font-size: 16px;
@@ -41,12 +39,10 @@
                 padding-bottom: 5px;
                 font-size: 14px;
                 max-width: 700px;
-            }
-            /* Table */
+            } /* Table */
             table {
                 border: 1px solid black;
                 border-collapse: collapse;
-                text-align: center;
                 margin: 20px auto;
             }
             th {
@@ -55,6 +51,7 @@
             }
             td {
                 padding: 10px 20px;
+                text-align: justify !important;
             }
             tr,
             td {
@@ -63,7 +60,12 @@
             .type {
                 font-weight: 700;
             }
-            /* Footer */
+            #tablehead {
+                text-decoration: underline;
+                font-weight: 800;
+                padding: 10px 5px;
+                text-align: center !important;
+            } /* Footer */
             .footer#footer {
                 text-align: center;
                 padding: 30px 10px;
@@ -82,175 +84,279 @@
             <p id="desc">
                 Welcome to Leo-API-Center. Here I have a collection of APIs
                 combined to one project which helps me in reducing the duplicate
-                code and allows easy maintenance and improve productivity. I
-                have converted the reusable codes to several functions which
-                helps me to develop new API's much faster with less effort.
+                code and allows easy maintenance and improve productivity. Ihave
+                converted the reusable codes to several functions which helps me
+                to develop new API's much faster with less effort.
             </p>
             <p id="desc">
                 My Primary Goal is to develop APIs and optimize them for faster
                 and better results. This APIs are made using
-                <b>ExpressJS framework</b>. Current Number of APIs: <b>19</b>
+                <b>ExpressJS framework</b>. Current Number of APIs: <b>31</b>
             </p>
             <table border="1">
                 <tr>
-                    <th width="150px">Path</th>
+                    <th width="140px">Path</th>
                     <th width="50px">Type</th>
                     <th width="50px">Require Token</th>
                     <th width="300px">Body</th>
-                    <th width="10px">###</th>
+                    <th width="300px">Description</th>
                 </tr>
                 <!-- LeoAuth -->
                 <tr>
-                    <td width="150px">/Auth/new_account</td>
+                    <td colspan="5" id="tablehead">Leo-Auth</td>
+                </tr>
+                <tr>
+                    <td width="140px">/Auth/new_account</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">No</td>
                     <td width="300px">
                         name, username, password, email, address
                     </td>
-                    <td width="10px"></td>
+                    <td width="300px">Creates a New Account</td>
                 </tr>
                 <tr>
-                    <td width="150px">/Auth/account</td>
+                    <td width="140px">/Auth/account</td>
                     <td width="50px" class="type">GET</td>
                     <td width="50px">Yes</td>
                     <td width="300px">-</td>
-                    <td width="10px"></td>
+                    <td width="300px">Fetches details about that account</td>
                 </tr>
                 <tr>
-                    <td width="150px">/Auth/ch_account</td>
+                    <td width="140px">/Auth/ch_account</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
+                    <td width="300px">*</td>
                     <td width="300px">
-                        Things to be changed E.g. name, address etc
+                        Pass things to be changed E.g. name, address etc but not
+                        username or password
                     </td>
-                    <td width="10px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/Auth/rm_account</td>
+                    <td width="140px">/Auth/rm_account</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">username, password</td>
-                    <td width="10px"></td>
+                    <td width="300px">Delete your Account</td>
                 </tr>
                 <tr>
-                    <td width="150px">/Auth/ch_password</td>
+                    <td width="140px">/Auth/ch_password</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">password (Under Construction)</td>
-                    <td width="10px"></td>
+                    <td width="300px">
+                        Change your Password (Under Development)
+                    </td>
                 </tr>
                 <tr>
-                    <td width="150px">/Auth/login</td>
+                    <td width="140px">/Auth/login</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">No</td>
                     <td width="300px">username, password</td>
-                    <td width="10px"></td>
+                    <td width="300px">
+                        Login to your account and obtain Token
+                    </td>
                 </tr>
                 <!-- FoodieLeo -->
                 <tr>
-                    <td width="150px">/FoodieLeo/cart</td>
+                    <td colspan="5" id="tablehead">Foodie-Leo</td>
+                </tr>
+                <tr>
+                    <td width="140px">/FoodieLeo/cart</td>
                     <td width="50px" class="type">GET</td>
                     <td width="50px">Yes</td>
                     <td width="300px">-</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/FoodieLeo/cart</td>
+                    <td width="140px">/FoodieLeo/cart</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">cart (Stringified JSON)</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/FoodieLeo/menu</td>
+                    <td width="140px">/FoodieLeo/menu</td>
                     <td width="50px" class="type">GET</td>
                     <td width="50px">No</td>
                     <td width="300px">-</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/FoodieLeo/order</td>
+                    <td width="140px">/FoodieLeo/order</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">-</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <!-- LeoBank -->
                 <tr>
-                    <td width="150px">/LeoBank/register</td>
+                    <td colspan="5" id="tablehead">Leo-Bank</td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoBank/register</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">-</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/LeoBank/deposit_money</td>
+                    <td width="140px">/LeoBank/deposit_money</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">pay_id, amount</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/LeoBank/withdraw_money</td>
+                    <td width="140px">/LeoBank/withdraw_money</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">amount</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/LeoBank/txn</td>
+                    <td width="140px">/LeoBank/txn</td>
                     <td width="50px" class="type">GET</td>
                     <td width="50px">Yes</td>
                     <td width="300px">-</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/LeoBank/txn</td>
+                    <td width="140px">/LeoBank/txn</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">pay_id, amount, remarks</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/LeoBank/create_fd</td>
+                    <td width="140px">/LeoBank/create_fd</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">amount</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/LeoBank/fd</td>
+                    <td width="140px">/LeoBank/fd</td>
                     <td width="50px" class="type">GET</td>
                     <td width="50px">Yes</td>
                     <td width="300px">-</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/LeoBank/encash_fd</td>
+                    <td width="140px">/LeoBank/encash_fd</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">fd_id</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
                 </tr>
                 <tr>
-                    <td width="150px">/LeoBank/balance</td>
+                    <td width="140px">/LeoBank/balance</td>
                     <td width="50px" class="type">GET</td>
                     <td width="50px">Yes</td>
                     <td width="300px">-</td>
-                    <td width="10px"></td>
+                    <td width="300px"></td>
+                </tr>
+                <!-- Leo-Social -->
+                <tr>
+                    <td colspan="5" id="tablehead">Leo-Social</td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/register</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">-</td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/account</td>
+                    <td width="50px" class="type">GET</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">user_id(*Optional)</td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/aboutMe</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">aboutMe</td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/follow</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">user_id</td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/unfollow</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">user_id</td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/accept_follow</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">
+                        user_id(Which is present in pending List)
+                    </td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/post</td>
+                    <td width="50px" class="type">GET</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px"></td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/post</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">img_url</td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/rm_post</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">post_id</td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/like</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">user_id, post_id</td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/add_comment</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">user_id, post_id, comment</td>
+                    <td width="300px"></td>
+                </tr>
+                <tr>
+                    <td width="140px">/LeoSocial/rm_comment</td>
+                    <td width="50px" class="type">POST</td>
+                    <td width="50px">Yes</td>
+                    <td width="300px">user_id, post_id, c_id</td>
+                    <td width="300px"></td>
                 </tr>
             </table>
             <br />
         </div>
         <div class="footer" id="footer">
             <p>
-                Developed by Malay Bhavsar. To Hire me Mail me on:
-                malaybhavsar.290@gmail.com
+                Developed by Malay Bhavsar. To Hire me Mail me
+                on:malaybhavsar.290@gmail.com
             </p>
             <p>Deployed on Heroku. Database: MongoDB (512 MB)</p>
             <p>
                 This APIs are not for professional use! The data on the database
-                will be deleted manually by me! So dont use it for professional
+                will be deleted manually by me! So don't use it for professional
                 purpose. Only for testing purpose.
             </p>
         </div>
