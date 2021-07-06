@@ -12,7 +12,7 @@ leoBank.post("/register", jwt_auth, (req, res) => {
     db_method
         .Find(db_user, { uid: req.token.data.uid, isDeleted: 0 })
         .then((result0) => {
-            if (result0 == null) {
+            if (result0 === null) {
                 payload = {
                     uid: req.token.data.uid,
                     pay_id: req.token.data.username,
@@ -51,7 +51,7 @@ leoBank.post("/deposit_money", jwt_auth, (req, res) => {
                 { $inc: { balance: amount_money } }
             )
             .then((result0) => {
-                if (result0.value == null) {
+                if (result0.value === null) {
                     res_error(
                         res,
                         "Something went wrong! Please wait sometime and then try again"
@@ -101,7 +101,7 @@ leoBank.post("/withdraw_money", jwt_auth, (req, res) => {
                             { $inc: { balance: -amount_money } }
                         )
                         .then((result0) => {
-                            if (result0.value == null) {
+                            if (result0.value === null) {
                                 res_error(
                                     res,
                                     "Something went wrong! Please wait sometime and then try again"
@@ -170,7 +170,7 @@ leoBank.post("/txn", jwt_auth, (req, res) => {
                             { $inc: { balance: -amount_money } }
                         )
                         .then((result1) => {
-                            if (result1.value == null) {
+                            if (result1.value === null) {
                                 res_error(
                                     res,
                                     "Something went wrong! Please wait sometime and then try again"
@@ -190,7 +190,7 @@ leoBank.post("/txn", jwt_auth, (req, res) => {
                                         }
                                     )
                                     .then((result2) => {
-                                        if (result2.value == null) {
+                                        if (result2.value === null) {
                                             res_error(
                                                 res,
                                                 "Something went wrong! Please wait sometime and then try again"
@@ -231,7 +231,7 @@ leoBank.post("/create_fd", jwt_auth, (req, res) => {
         db_method
             .Find(db_user, { uid: req.token.data.uid, isDeleted: 0 })
             .then((result0) => {
-                if (result0 == null) {
+                if (result0 === null) {
                     res_error(res, "Try Again Later. Suggested: Re-Login");
                 } else if (result0.balance <= amount_money) {
                     res_error(res, "Insufficient Balance");
@@ -243,7 +243,7 @@ leoBank.post("/create_fd", jwt_auth, (req, res) => {
                             { $inc: { balance: -amount_money } }
                         )
                         .then((result0) => {
-                            if (result0.value == null) {
+                            if (result0.value === null) {
                                 res_error(
                                     res,
                                     "Something went wrong! Please wait sometime and then try again"
@@ -296,7 +296,7 @@ leoBank.get("/fd", jwt_auth, (req, res) => {
             isDeleted: 0,
         })
         .then((result0) => {
-            if (result0 == null) {
+            if (result0 === null) {
                 res_error(res, "Unable to fetch your FDs");
             } else {
                 res.status(200).json({ success: true, fd: result0.fd });
@@ -310,7 +310,7 @@ leoBank.post("/encash_fd", jwt_auth, (req, res) => {
         db_method
             .Find(db_user, { uid: req.token.data.uid, isDeleted: 0 })
             .then((result0) => {
-                if (result0 == null) {
+                if (result0 === null) {
                     res_error(res, "Try Again Later. Suggested: Re-Login");
                 } else {
                     var amount = null;
@@ -331,7 +331,7 @@ leoBank.post("/encash_fd", jwt_auth, (req, res) => {
                                 { fd: { fd_id: ObjectId(req.body.fd_id) } }
                             )
                             .then((result0) => {
-                                if (result0.value == null) {
+                                if (result0.value === null) {
                                     res_error(
                                         res,
                                         "Something went wrong! Please wait sometime and then try again"

@@ -112,44 +112,49 @@
                     <td width="300px">
                         name, username, password, email, address
                     </td>
-                    <td width="300px"></td>
+                    <td width="300px">Creates a New Account</td>
                 </tr>
                 <tr>
                     <td width="140px">/Auth/account</td>
                     <td width="50px" class="type">GET</td>
                     <td width="50px">Yes</td>
                     <td width="300px">-</td>
-                    <td width="300px"></td>
+                    <td width="300px">Fetches details about that account</td>
                 </tr>
                 <tr>
                     <td width="140px">/Auth/ch_account</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
+                    <td width="300px">*</td>
                     <td width="300px">
-                        Things to be changed E.g. name, address etc
+                        Pass things to be changed E.g. name, address etc but not
+                        username or password
                     </td>
-                    <td width="300px"></td>
                 </tr>
                 <tr>
                     <td width="140px">/Auth/rm_account</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">username, password</td>
-                    <td width="300px"></td>
+                    <td width="300px">Delete your Account</td>
                 </tr>
                 <tr>
                     <td width="140px">/Auth/ch_password</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
                     <td width="300px">password (Under Construction)</td>
-                    <td width="300px"></td>
+                    <td width="300px">
+                        Change your Password (Under Development)
+                    </td>
                 </tr>
                 <tr>
                     <td width="140px">/Auth/login</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">No</td>
                     <td width="300px">username, password</td>
-                    <td width="300px"></td>
+                    <td width="300px">
+                        Login to your account and obtain Token
+                    </td>
                 </tr>
                 <!-- FoodieLeo -->
                 <tr>
@@ -302,7 +307,7 @@
                     <td width="140px">/LeoSocial/post</td>
                     <td width="50px" class="type">GET</td>
                     <td width="50px">Yes</td>
-                    <td width="300px">user_id(*optional)</td>
+                    <td width="300px"></td>
                     <td width="300px"></td>
                 </tr>
                 <tr>

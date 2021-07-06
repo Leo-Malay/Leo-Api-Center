@@ -48,6 +48,8 @@ socialLeo.get("/account", jwt_auth, (req, res) => {
     db_method.Find(db_user, { uid: user_id, isDeleted: 0 }).then((result0) => {
         if (result0 === null) {
             res_msg.error(res, "No Such Account Found");
+        } else if (result0.uid === req.token.data.uid) {
+            res.status(200).json(result0);
         } else if (result0.followers.indexOf(req.token.data.uid) !== -1) {
             res.status(200).json({
                 uid: result0.uid,
@@ -57,8 +59,6 @@ socialLeo.get("/account", jwt_auth, (req, res) => {
                 posts: result0.posts,
                 isVerified: result0.isVerified,
             });
-        } else if (result0.uid === req.token.data.uid) {
-            res.status(200).json(result0);
         } else {
             res.status(200).json({
                 uid: result0.uid,
@@ -73,25 +73,53 @@ socialLeo.get("/account", jwt_auth, (req, res) => {
 });
 socialLeo.post("/about_me", jwt_auth, (req, res) => {
     if (!req.body.aboutMe) {
-        res_msg.error(res, "Please provide data in fieldName: aboutMe");
+        res_msg.error(res, "Please provide aboutMe");
     } else {
+        db_method
+            .Update(
+                db_user,
+                { uid: req.token.data.uid, isDeleted: 0 },
+                {
+                    aboutMe: req.body.aboutMe,
+                }
+            )
+            .then((result0) => {
+                if (result0.value === null) {
+                    res_msg.error(res, "Unable to complete you action!");
+                } else {
+                    res_msg.success(res, "AboutMe Updated Successfully");
+                }
+            });
     }
 });
 socialLeo.post("/follow", jwt_auth, (req, res) => {
     if (!req.body.user_id) {
         res_msg.error(res, "Please provide User_Id");
+    } else if (req.body.user_id === req.token.data.payload) {
+        res_msg.success(res, "You are always following yourself :)");
     } else {
         db_method
-            .InsertArray(
-                db_user,
-                { uid: req.body.user_id, isDeleted: 0 },
-                { pendingFollowReq: req.token.data.uid }
-            )
+            .Find(db_user, { uid: req.token.data.uid, isDeleted: 0 })
             .then((result0) => {
-                if (result0.value !== null) {
-                    res_msg.success(res, "Follow request sent!");
+                if (result0.following.indexOf(req.body.user_id) !== -1) {
+                    res_msg.success(res, "You are already following!");
                 } else {
-                    res_msg.error(res, "Unable to complete your action");
+                    db_method
+                        .InsertArray(
+                            db_user,
+                            { uid: req.body.user_id, isDeleted: 0 },
+                            { pendingFollowReq: req.token.data.uid }
+                        )
+                        .then((result0) => {
+                            if (result0.value !== null) {
+                                res_msg.success(res, "Follow request sent!");
+                            } else {
+                                res_msg.error(
+                                    res,
+                                    "Unable to complete your action"
+                                );
+                            }
+                        });
                 }
             });
     }
@@ -99,6 +127,8 @@ socialLeo.post("/follow", jwt_auth, (req, res) => {
 socialLeo.post("/unfollow", jwt_auth, (req, res) => {
     if (!req.body.user_id) {
         res_msg.error(res, "Please provide User_Id");
+    } else if (req.body.user_id === req.token.data.uid) {
+        res_msg.success(res, "You can let yourself behind! :)");
     } else {
         db_method
             .RemoveArray(
@@ -138,36 +168,59 @@ socialLeo.post("/accept_follow", jwt_auth, (req, res) => {
         res_msg.error(res, "Please provide User_Id");
     } else {
         db_method
-            .InsertArray(
-                db_user,
-                { uid: req.body.user_id, isDeleted: 0 },
-                { following: req.token.data.uid }
-            )
+            .Find(db_user, { uid: req.body.user_id, isDeleted: 0 })
             .then((result0) => {
-                if (result0.value !== null) {
+                if (result0 === null) {
+                    res_msg.error(res, "Unable to complete your action!");
+                } else if (result0.following.indexOf(req.body.user_id) === -1) {
+                    res_msg.error(res, "No such request pending!");
+                } else {
                     db_method
                         .InsertArray(
                             db_user,
-                            { uid: req.token.data.uid, isDeleted: 0 },
-                            { followers: req.body.user_id }
+                            { uid: req.body.user_id, isDeleted: 0 },
+                            { following: req.token.data.uid }
                         )
                         .then((result0) => {
                             if (result0.value !== null) {
                                 db_method
-                                    .RemoveArray(
+                                    .InsertArray(
                                         db_user,
                                         {
                                             uid: req.token.data.uid,
                                             isDeleted: 0,
                                         },
-                                        { pendingFollowReq: req.body.user_id }
+                                        { followers: req.body.user_id }
                                     )
-                                    .then((result1) => {
-                                        if (result1.value !== null) {
-                                            res_msg.success(
-                                                res,
-                                                "User started following you!"
-                                            );
+                                    .then((result0) => {
+                                        if (result0.value !== null) {
+                                            db_method
+                                                .RemoveArray(
+                                                    db_user,
+                                                    {
+                                                        uid: req.token.data.uid,
+                                                        isDeleted: 0,
+                                                    },
+                                                    {
+                                                        pendingFollowReq:
+                                                            req.body.user_id,
+                                                    }
+                                                )
+                                                .then((result1) => {
+                                                    if (
+                                                        result1.value !== null
+                                                    ) {
+                                                        res_msg.success(
+                                                            res,
+                                                            "User started following you!"
+                                                        );
+                                                    } else {
+                                                        res_msg.error(
+                                                            res,
+                                                            "Unable to complete your action"
+                                                        );
+                                                    }
+                                                });
                                         } else {
                                             res_msg.error(
                                                 res,
@@ -182,17 +235,34 @@ socialLeo.post("/accept_follow", jwt_auth, (req, res) => {
                                 );
                             }
                         });
-                } else {
-                    res_msg.error(res, "Unable to complete your action");
                 }
             });
     }
 });
 socialLeo.get("/post", jwt_auth, (req, res) => {
-    if (!req.body.user_id) {
-        res_msg.error(res, "Please provide User_Id");
-    } else {
-    }
+    db_method
+        .Find(db_user, { uid: req.token.data.uid, isDeleted: 0 })
+        .then((result0) => {
+            db_method
+                .FindAll(db_user, {
+                    uid: { $in: result0.following },
+                    isDeleted: 0,
+                })
+                .toArray((err, result1) => {
+                    if (err) throw err;
+                    var post_ls = [];
+                    result1.map((ele) => {
+                        ele.posts.forEach((element) => {
+                            element.uid = ele.uid;
+                        });
+                        post_ls = post_ls.concat(ele.posts);
+                    });
+                    post_ls.sort((a, b) => {
+                        return b.date - a.date;
+                    });
+                    res.status(200).json({ success: true, posts: post_ls });
+                });
+        });
 });
 socialLeo.post("/post", jwt_auth, (req, res) => {
     if (!req.body.img_url) {
