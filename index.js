@@ -13,6 +13,7 @@ const App = express();
 App.use(compression());
 App.use(helmet());
 App.use(express.static("public"));
+App.use(express.json());
 App.use(express.urlencoded({ extended: true }));
 
 App.use("/Auth", auth);

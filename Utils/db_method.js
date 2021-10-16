@@ -1,4 +1,4 @@
-const db = require("../../db").getDB;
+const db = require("../db").getDB;
 
 const Insert = (db_name, payload) => {
     return db()
