@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/CSS/General.css" />
+        <title>LeoLogin</title>
+    </head>
+    <body>
+        <div class="Card">
+            <p class="Heading">LeoAuth</p>
+            <form method="POST" action="/Auth/login">
+                <input
+                    type="text"
+                    name="username"
+                    id="Username"
+                    placeholder="Username"
+                    required
+                /><br />
+                <input
+                    type="password"
+                    name="password"
+                    id="Password"
+                    placeholder="Password"
+                    required
+                /><br />
+                <input type="submit" value="Login" /><br />
+            </form>
+            <a href="/newAccount">New Here</a>
+        </div>
+    </body>
+</html>

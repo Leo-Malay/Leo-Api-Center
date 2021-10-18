@@ -7,14 +7,16 @@
         "bcrypt": "^5.0.1",
         "compression": "^1.7.4",
         "config": "^3.3.6",
+        "cors": "^2.8.5",
         "express": "^4.17.1",
-        "helmet": "^4.6.0",
+        "express-validator": "^6.13.0",
         "jsonwebtoken": "^8.5.1",
-        "mongodb": "^3.6.9"
+        "mongodb": "^3.7.2",
+        "nodemon": "^2.0.13"
     },
     "devDependencies": {},
     "scripts": {
-        "start": "node index.js"
+        "start": "nodemon index.js"
     },
     "repository": {
         "type": "git",

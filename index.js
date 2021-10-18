@@ -1,30 +1,35 @@
 const express = require("express");
-const helmet = require("helmet");
-const db = require("./db");
+const dbConn = require("./db").connect;
+const pathJoin = require("path").join;
+const cors = require("cors");
 const compression = require("compression");
-const path = require("path");
-
-const auth = require("./Routes/Auth");
-const foodieLeo = require("./Routes/FoodieLeo");
-const leoBank = require("./Routes/LeoBank");
-const socialLeo = require("./Routes/SocialLeo");
-
 const App = express();
+
+// Configuring App
 App.use(compression());
-App.use(helmet());
-App.use(express.static("public"));
-App.use(express.json());
+App.use(cors());
+App.use(express.static(pathJoin(__dirname, "public")));
 App.use(express.urlencoded({ extended: true }));
+App.use(express.json());
 
-App.use("/Auth", auth);
-App.use("/FoodieLeo", foodieLeo);
-App.use("/LeoBank", leoBank);
-App.use("/LeoSocial", socialLeo);
-App.use("/", (req, res) => {
-    res.sendFile(path.join(__dirname + "/public/index.html"));
+// Configuring Routes
+const Router = express.Router();
+Router.get((req, res) => {
+    res.sendFile(pathJoin(__dirname + "/public/index.html"));
 });
+Router.get("/login", (req, res) => {
+    res.sendFile(pathJoin(__dirname + "/public/Login.html"));
+});
+Router.get("/newAccount", (req, res) => {
+    res.sendFile(pathJoin(__dirname + "/public/NewAccount.html"));
+});
+App.use("/", Router);
+App.use("/Auth", require("./Routes/Auth"));
+App.use("/FoodieLeo", require("./Routes/FoodieLeo"));
+App.use("/LeoBank", require("./Routes/LeoBank"));
+App.use("/LeoSocial", require("./Routes/SocialLeo"));
 
-db.connect((err) => {
+dbConn((err) => {
     if (err) throw err;
     App.listen(process.env.PORT || 8501, () => {
         console.log("[+] Server has started", process.env.PORT || 8501);

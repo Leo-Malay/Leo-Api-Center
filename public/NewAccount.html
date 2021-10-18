@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/CSS/General.css" />
+        <script
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"
+        ></script>
+        <title>LeoLogin</title>
+    </head>
+    <body>
+        <div class="Card">
+            <p class="Heading">LeoAuth</p>
+            <form method="post" action="/Auth/new_account">
+                <input
+                    type="text"
+                    name="fname"
+                    id="fname"
+                    placeholder="First Name"
+                    required
+                /><br />
+                <input
+                    type="text"
+                    name="lname"
+                    id="lname"
+                    placeholder="Last Name"
+                    required
+                /><br />
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    placeholder="Email"
+                    required
+                /><br />
+                <input
+                    type="mobile"
+                    name="number"
+                    id="mobile"
+                    placeholder="Mobile No."
+                    required
+                /><br />
+                <select name="country" id="country" required>
+                    <option value="NULL" selected disabled>Country</option>
+                    <option value="IN">India</option>
+                    <option value="USA">United States of America</option>
+                    <option value="UK">United Kingdom</option>
+                    <option value="AUS">Australia</option>
+                    <option value="NZ">New Zealand</option>
+                    <option value="USSR">Russia</option>
+                </select>
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    placeholder="Username"
+                    required
+                /><br />
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Password"
+                    required
+                /><br />
+                <input
+                    type="button"
+                    value="Create Account"
+                    id="btnSubmit"
+                /><br />
+            </form>
+            <a href="/login">Already Have Account</a>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $.ajaxSetup({
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        Accept: "*/*",
+                        // Authorization: "bearer " + getCookie("token"),
+                    },
+                });
+                $("#btnSubmit").click(function () {
+                    $.post(
+                        "/Auth/new_account",
+                        {
+                            fname: $("fname").val(),
+                            lname: $("lname").val(),
+                            email: $("email").val(),
+                            mobile: $("mobile").val(),
+                            country: $("country").val(),
+                            username: $("username").val(),
+                            password: $("password").val(),
+                        },
+                        (data, status, xhr) => {
+                            // success callback function
+                            alert("status: " + status + ", data: " + data);
+                        }
+                    );
+                });
+            });
+        </script>
+    </body>
+</html>
