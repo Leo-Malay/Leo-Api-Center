@@ -75,21 +75,18 @@ const UpdateAccount = (req, res) => {
         return res.status(400).json({ errors: error.array() });
     }
     var payload = req.body;
-    if (payload.username)
-        return res_msg.error(res, "Cannot update your username!");
+    if (payload.username || payload.password || payload.token)
+        return res_msg.error(res, "Cannot update your username and password!");
     if (payload?.email) {
-        if (!payload?.personal) payload["personal"] = {};
-        payload.personal["email"] = payload.email;
+        payload["personal.email"] = payload.email;
         delete payload.email;
     }
     if (payload?.mobile) {
-        if (!payload?.personal) payload["personal"] = {};
-        payload.personal["mobile"] = payload.mobile;
+        payload["personal.mobile"] = payload.mobile;
         delete payload.mobile;
     }
     if (payload?.country) {
-        if (!payload?.personal) payload["personal"] = {};
-        payload.personal["country"] = payload.country;
+        payload["personal.country"] = payload.country;
         delete payload.country;
     }
     db.Update(
@@ -144,7 +141,43 @@ const UpdatePassword = (req, res) => {
     if (!error.isEmpty()) {
         return res.status(400).json({ errors: error.array() });
     }
-    return res_msg.error(res, "API Under Construction");
+    db.Find(db_auth, {
+        _id: db.getOID(req.token.data.uid),
+        username: req.token.data.username,
+        isDeleted: !1,
+    }).then((result) => {
+        compare(req.body.old_password, result.password, (err, result0) => {
+            if (err) throw err;
+            if (result0 == false)
+                return res_msg.error(res, "Incorrect Old Password");
+            hash(
+                req.body.new_password,
+                config.get("AUTH.BCRYPT.saltRound"),
+                (err, pass_hash) => {
+                    if (err) throw err;
+                    db.Update(
+                        db_auth,
+                        {
+                            _id: db.getOID(req.token.data.uid),
+                            username: req.token.data.username,
+                            isDeleted: !1,
+                        },
+                        { password: pass_hash }
+                    ).then((result0) => {
+                        if (result0.value === null)
+                            return res_msg.error(
+                                res,
+                                "Unable to find your account!"
+                            );
+                        return res_msg.success(
+                            res,
+                            "Password Updated Successfully"
+                        );
+                    });
+                }
+            );
+        });
+    });
 };
 const Login = (req, res) => {
     var error = validationResult(req);
@@ -166,7 +199,7 @@ const Login = (req, res) => {
                 function (err, result1) {
                     if (err) throw err;
                     if (result1 === false)
-                        res_msg.error(res, "Incorrect Password");
+                        return res_msg.error(res, "Incorrect Password");
                     var token = GenToken(
                         {
                             uid: db.getID(result0._id),

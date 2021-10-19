@@ -26,18 +26,23 @@ auth.post(
 auth.get("/account", jwt_auth, Account);
 auth.post(
     "/ch_account",
-    body("fname").isAlpha(),
-    body("lname").isAlpha(),
-    body("username").isAlphanumeric(),
-    body("password").isLength({ min: 8, max: 12 }).escape(),
-    body("email").isEmail(),
-    body("mobile").isMobilePhone(),
-    body("country").isAlpha(),
+    body("fname").optional().isAlpha(),
+    body("lname").optional().isAlpha(),
+    body("username").optional().isAlphanumeric(),
+    body("email").optional().isEmail(),
+    body("mobile").optional().isMobilePhone(),
+    body("country").optional().isAlpha(),
     jwt_auth,
     UpdateAccount
 );
 auth.post("/rm_account", jwt_auth, RemoveAccount);
-auth.post("/ch_password", UpdatePassword);
+auth.post(
+    "/ch_password",
+    body("old_password").notEmpty().isLength({ min: 8, max: 12 }).escape(),
+    body("new_password").notEmpty().isLength({ min: 8, max: 12 }).escape(),
+    jwt_auth,
+    UpdatePassword
+);
 auth.post(
     "/login",
     body("username").notEmpty().isAlphanumeric(),

@@ -110,7 +110,7 @@
                     <td width="50px" class="type">POST</td>
                     <td width="50px">No</td>
                     <td width="300px">
-                        name, username, password, email, address
+                        fname, lname, username, password, email, mobile, country
                     </td>
                     <td width="300px">Creates a New Account</td>
                 </tr>
@@ -127,7 +127,7 @@
                     <td width="50px">Yes</td>
                     <td width="300px">*</td>
                     <td width="300px">
-                        Pass things to be changed E.g. name, address etc but not
+                        Pass things to be changed E.g. fname, mobile etc but not
                         username or password
                     </td>
                 </tr>
@@ -142,10 +142,8 @@
                     <td width="140px">/Auth/ch_password</td>
                     <td width="50px" class="type">POST</td>
                     <td width="50px">Yes</td>
-                    <td width="300px">password (Under Construction)</td>
-                    <td width="300px">
-                        Change your Password (Under Development)
-                    </td>
+                    <td width="300px">old_password, new_password</td>
+                    <td width="300px">Update your Account Password</td>
                 </tr>
                 <tr>
                     <td width="140px">/Auth/login</td>
