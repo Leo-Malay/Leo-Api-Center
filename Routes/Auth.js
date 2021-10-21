@@ -8,6 +8,7 @@ const {
     RemoveAccount,
     UpdatePassword,
     Login,
+    Logout,
 } = require("../Controllers/AuthController");
 // Configuring the router.
 const auth = Router();
@@ -49,5 +50,6 @@ auth.post(
     body("password").notEmpty().isLength({ min: 8, max: 12 }).escape(),
     Login
 );
+auth.post("/logout", Logout);
 
 module.exports = auth;

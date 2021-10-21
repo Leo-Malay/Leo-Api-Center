@@ -3,7 +3,7 @@ const db = require("../db");
 const config = require("config");
 const { validationResult } = require("express-validator");
 const res_msg = require("../Utils/res_msg");
-const GenToken = require("../Utils/token").GenToken;
+const GenToken = require("../Routes/token").GenToken;
 const db_auth = "Auth";
 
 const NewAccount = (req, res) => {
@@ -232,6 +232,10 @@ const Login = (req, res) => {
     );
 };
 
+const Logout = (req, res) => {
+    req.session.destroy();
+    res_msg.success(res, "Logout Successful");
+};
 module.exports = {
     NewAccount,
     Account,
@@ -239,4 +243,5 @@ module.exports = {
     RemoveAccount,
     UpdatePassword,
     Login,
+    Logout,
 };

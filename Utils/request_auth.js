@@ -1,6 +1,6 @@
 const config = require("config");
 const res_msg = require("./res_msg");
-const VerifyToken = require("./token").VerifyToken;
+const VerifyToken = require("../Routes/token").VerifyToken;
 const db = require("../db");
 const req_auth = (req, res, next) => {
     var payload = req.header;
