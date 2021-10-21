@@ -16,15 +16,14 @@ const req_auth = (req, res, next) => {
     }
 };
 const jwt_auth = (req, res, next) => {
-    const bearerHeader = req.headers.authorization;
-    if (!bearerHeader) return res_msg.forbidden(res);
-    token = bearerHeader.split(" ")[1];
-    req.token = VerifyToken(token);
+    req.token = VerifyToken(req.session.user.token);
     if (req.token.success === false) return res_msg.error(res, req.token.msg);
-    db.Find("Auth", { token: token, isDeleted: !1 }).then((result0) => {
-        if (result0.username !== req.token.data.username)
-            return res_msg.error(res, "Token Mismatch! Try Login again");
-        next();
-    });
+    db.Find("Auth", { token: req.session.user.token, isDeleted: !1 }).then(
+        (result0) => {
+            if (result0.username !== req.token.data.username)
+                return res_msg.error(res, "Token Mismatch! Try Login again");
+            next();
+        }
+    );
 };
 module.exports = { req_auth, jwt_auth };

@@ -216,8 +216,14 @@ const Login = (req, res) => {
                         },
                         { token: token }
                     ).then((result1) => {
-                        if (result1.lastErrorObject.updatedExisting === true)
-                            return res.json({ success: true, token });
+                        if (result1.lastErrorObject.updatedExisting === true) {
+                            req.session.user = {
+                                username: payload.username,
+                                token,
+                            };
+                            req.session.save();
+                            return res.json({ success: true });
+                        }
                         return res_msg.error(res, "Unable to generate token");
                     });
                 }
